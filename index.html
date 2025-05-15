@@ -23,6 +23,7 @@
       flex-direction: column;
     }
 
+    /* Облака */
     @keyframes floatCloud {
       0% { transform: translateX(-100%); }
       100% { transform: translateX(100%); }
@@ -177,6 +178,39 @@
       animation: bounceIn 0.5s ease-in-out forwards;
     }
 
+    /* Комната */
+    #raccoon-container {
+      width: 100%;
+      height: 40vh;
+      margin: 20px auto;
+    }
+
+    #playerInfoPanel {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(255,255,255,0.8);
+      padding: 10px;
+      border-radius: 10px;
+      z-index: 100;
+    }
+
+    #zzzAnimation {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #333;
+      animation: pop 0.5s ease forwards;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0); }
+      to { transform: scale(1); }
+    }
+
+    /* Память */
     .memory-grid {
       display: grid;
       grid-template-columns: repeat(4, 80px);
@@ -204,6 +238,7 @@
       transform: rotateY(180deg);
     }
 
+    /* Змейка */
     #snakeCanvas {
       background-color: #e6f7ff;
       border: 3px solid #8B4513;
@@ -212,6 +247,7 @@
       display: block;
     }
 
+    /* Одежда */
     .clothes-catalog {
       position: absolute;
       top: 0;
@@ -253,23 +289,41 @@
       border: 2px solid gold;
     }
 
-    #raccoon-container {
-      width: 100%;
-      height: 40vh;
-      margin: 20px auto;
+    /* Иконки SVG */
+    svg.icon {
+      width: 30px;
+      height: 30px;
+      vertical-align: middle;
     }
 
-    #playerInfoPanel {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      background: rgba(255,255,255,0.8);
+    /* Игровые экраны */
+    .store-menu {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .item {
+      background: #fff8dc;
       padding: 10px;
-      border-radius: 10px;
-      z-index: 100;
+      border-radius: 15px;
+      width: 120px;
+      text-align: center;
+      box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
     }
 
-    #zzzAnimation {
+    .item:hover {
+      transform: scale(1.05);
+    }
+
+    .item svg {
+      margin: 5px auto;
+    }
+
+    .zzz {
       position: absolute;
       top: 20px;
       right: 20px;
@@ -285,7 +339,7 @@
     }
   </style>
 
-  <!-- Three.js -->
+  <!-- Библиотеки Three.js -->
   <script src="https://cdn.jsdelivr.net/npm/three @0.152.2/build/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three @0.152.2/examples/js/loaders/GLTFLoader.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three @0.152.2/examples/js/controls/OrbitControls.js"></script>
@@ -308,7 +362,7 @@
   <div class="container">
 
     <!-- Комнатa -->
-    <div class="screen animated" id="room">
+    <div class="screen animated active" id="room">
       <div id="raccoon-container"></div>
 
       <div class="status-bar">
@@ -425,7 +479,7 @@
   <div id="memoryGame" style="display:none;">
     <h3 class="bounce">🕰 Найди пару</h3>
     <p>Нажми на одинаковые карточки!</p>
-    <div class="memory-grid" id="memoryGrid"></div>
+    <div class="memory-grid bounce" id="memoryGrid"></div>
     <button class="bounce" onclick="backToRoom()">Назад</button>
   </div>
 
@@ -434,694 +488,11 @@
     <h3 class="bounce">🐍 Игра Змейка</h3>
     <canvas id="snakeCanvas" width="400" height="400"></canvas>
     <p>Очки: <span id="snakeScore">0</span></p>
-    <button class="bounce" onclick="startSnakeGame()">Начать</button>
+    <button class="bounce" onclick="initSnakeGame()">Начать</button>
     <button class="bounce" onclick="backToRoom()">Назад</button>
   </div>
 
-  <script>
-    const playerNameInput = document.getElementById("playerName");
-    const birthDateInput = document.getElementById("birthDate");
-    const namePopup = document.getElementById("namePopup");
-    const homeworkPopup = document.getElementById("homeworkPopup");
-
-    let player = {
-      name: "",
-      birthDate: "",
-      health: 100,
-      energy: 100,
-      stars: 10,
-      lastHomeworkComplete: null,
-      inventory: { food: {}, furniture: {}, clothes: {} },
-      selectedFurniture: null,
-      selectedCloth: null
-    };
-
-    function loadFromStorage() {
-      const saved = localStorage.getItem('ricky-game');
-      if (saved) {
-        player = JSON.parse(saved);
-        checkBirthday();
-        updateBars();
-        startGameLoop();
-      } else {
-        namePopup.classList.remove('hidden');
-      }
-    }
-
-    function saveToStorage() {
-      localStorage.setItem('ricky-game', JSON.stringify(player));
-    }
-
-    function savePlayerInfo() {
-      player.name = playerNameInput.value || "Рикки";
-      player.birthDate = birthDateInput.value;
-      namePopup.style.display = 'none';
-      initRaccoonModel();
-      checkBirthday();
-      startGameLoop();
-      saveToStorage();
-    }
-
-    function checkBirthday() {
-      if (!player.birthDate) return;
-
-      const today = new Date();
-      const birth = new Date(player.birthDate);
-      if (today.getMonth() === birth.getMonth() && today.getDate() === birth.getDate()) {
-        alert(`🎉 С днём рождения, ${player.name}! 🎉`);
-      }
-    }
-
-    function updateBars() {
-      document.getElementById("healthBar").style.width = `${player.health}%`;
-      document.getElementById("energyBar").style.width = `${player.energy}%`;
-      document.getElementById("starsBar").style.width = `${player.stars}%`;
-
-      document.getElementById("playerNameLabel").innerText = player.name || "Рикки";
-      document.getElementById("equippedCloth").innerText = player.selectedCloth || "Ничего";
-      document.getElementById("raccoonStatusLabel").innerText =
-        player.health <= 30 ? "Голоден" :
-        player.energy <= 30 ? "Устал" : "Здоров";
-    }
-
-    function feed() {
-      if (player.health <= 0) {
-        alert("Рикки хочет кушать, покорми его чтобы продолжить!");
-        return;
-      }
-      player.health += 30;
-      if (player.health > 100) player.health = 100;
-      updateBars();
-      playSound('buySound');
-      saveToStorage();
-    }
-
-    function sleep() {
-      if (player.energy >= 100) return;
-      alert("Рикки лег спать...");
-      player.energy = 100;
-      updateBars();
-      playSound('clickSound');
-      saveToStorage();
-    }
-
-    function doHomework() {
-      homeworkPopup.classList.remove("hidden");
-    }
-
-    function setReminder() {
-      const time = document.getElementById("reminderTime").value;
-      if (!time) return alert("Выберите время напоминания.");
-      alert("Напоминание установлено!");
-    }
-
-    function completeHomework() {
-      if (player.lastHomeworkComplete === new Date().toDateString()) {
-        alert("Вы уже выполнили задание сегодня!");
-        return;
-      }
-
-      player.stars += 3;
-      player.lastHomeworkComplete = new Date().toDateString();
-      updateBars();
-      playSound('buySound');
-      saveToStorage();
-      alert("Молодец! Получено 3 звезды!");
-    }
-
-    function startGameLoop() {
-      setInterval(() => {
-        if (document.visibilityState === "visible") {
-          if (player.energy > 0) {
-            player.energy -= 1;
-            updateBars();
-          } else {
-            showSleepAnimation();
-          }
-
-          if (player.health > 0) {
-            player.health -= 0.25;
-            updateBars();
-          } else {
-            alert("Рикки голоден! Покорми его!");
-          }
-        }
-        saveToStorage();
-      }, 60000 / 40);
-    }
-
-    function showSleepAnimation() {
-      const zzz = document.createElement('div');
-      zzz.id = "zzzAnimation";
-      zzz.innerHTML = 'Z z z';
-      document.getElementById('room').appendChild(zzz);
-
-      playSound('zzzSound');
-
-      setTimeout(() => {
-        zzz.remove();
-      }, 2000);
-    }
-
-    function playSound(soundId) {
-      if (soundToggle.checked) {
-        const sound = document.getElementById(soundId);
-        sound.currentTime = 0;
-        sound.play();
-      }
-    }
-
-    function showScreen(id) {
-      document.querySelectorAll('.screen').forEach(el => {
-        el.classList.remove('show', 'bounce');
-        el.style.display = 'none';
-      });
-
-      const screen = document.getElementById(id);
-      if (!screen) return;
-
-      screen.style.display = 'block';
-      setTimeout(() => {
-        screen.classList.add('show', 'bounce');
-      }, 50);
-    }
-
-    function backToRoom() {
-      showScreen('room');
-    }
-
-    function goToStore() {
-      showScreen('store');
-      showCategory('food');
-    }
-
-    function goToGames() {
-      showScreen('games');
-    }
-
-    function doHomework() {
-      homeworkPopup.classList.remove("hidden");
-    }
-
-    function setReminder() {
-      const time = document.getElementById("reminderTime").value;
-      if (!time) return alert("Выберите время напоминания.");
-      alert("Напоминание установлено!");
-    }
-
-    function completeHomework() {
-      if (player.lastHomeworkComplete === new Date().toDateString()) {
-        alert("Вы уже выполнили задание сегодня!");
-        return;
-      }
-
-      player.stars += 3;
-      player.lastHomeworkComplete = new Date().toDateString();
-      updateBars();
-      saveToStorage();
-      alert("Молодец! Получено 3 звезды!");
-    }
-
-    // --- Магазин ---
-
-    const items = {
-      food: [
-        { name: "Клубника", price: 1, restore: 30 },
-        { name: "Малина", price: 1, restore: 30 },
-        { name: "Черника", price: 1, restore: 30 },
-        { name: "Ежевика", price: 1, restore: 30 },
-        { name: "Крыжовник", price: 1, restore: 30 },
-        { name: "Лесной орех", price: 2, restore: 50 },
-        { name: "Грецкий орех", price: 2, restore: 50 },
-        { name: "Фундук", price: 2, restore: 50 },
-        { name: "Миндаль", price: 2, restore: 50 },
-        { name: "Кешью", price: 2, restore: 50 }
-      ],
-      furniture: [
-        { name: "Кровать №1", price: 3 },
-        { name: "Кровать №2", price: 3 },
-        { name: "Кровать №3", price: 4 },
-        { name: "Кровать №4", price: 4 },
-        { name: "Кровать №5", price: 5 },
-        { name: "Кровать №6", price: 5 },
-        { name: "Кровать №7", price: 6 },
-        { name: "Кровать №8", price: 6 },
-        { name: "Кровать №9", price: 8 },
-        { name: "Кровать №10", price: 8 }
-      ],
-      clothes: [
-        { name: "Тога", price: 2 },
-        { name: "Хитон", price: 3 },
-        { name: "Лорика", price: 4 },
-        { name: "Гребень", price: 5 },
-        { name: "Шлем", price: 6 },
-        { name: "Щит", price: 6 },
-        { name: "Сандалии", price: 3 },
-        { name: "Кольчуга", price: 7 },
-        { name: "Плащ", price: 5 },
-        { name: "Римский воин", price: 9 }
-      ]
-    };
-
-    function getItemButtonText(category, item) {
-      if (category === 'furniture' && player.selectedFurniture === item.name) {
-        return 'Выбрана';
-      }
-      if (player.inventory[category][item.name]) {
-        return 'Выбрать';
-      }
-      return `Купить за ${item.price}`;
-    }
-
-    function showCategory(category) {
-      const menu = document.getElementById('storeMenu');
-      menu.classList.remove('show');
-      setTimeout(() => {
-        menu.innerHTML = '';
-        items[category].forEach((item, index) => {
-          const div = document.createElement('div');
-          div.className = 'item bounce';
-          let icon = '';
-          switch (category) {
-            case 'food':
-              icon = '<svg width="30" height="30"><use href="#icon-berry"/></svg>';
-              break;
-            case 'furniture':
-              icon = '<svg width="30" height="30"><use href="#icon-bed"/></svg>';
-              break;
-            case 'clothes':
-              icon = '<svg width="30" height="30"><use href="#icon-clothes"/></svg>';
-              break;
-          }
-
-          div.innerHTML = `
-            ${icon}
-            <span>${item.name}</span>
-            <span>💰 ${item.price} звёзд</span>
-            <button onclick="buyItem('${category}', ${index})">${getItemButtonText(category, item)}</button>
-          `;
-
-          if (category === 'clothes') {
-            div.style.cursor = 'pointer';
-            div.onclick = () => openClothesCatalog(item);
-          }
-
-          menu.appendChild(div);
-        });
-        menu.classList.add('show');
-      }, 100);
-    }
-
-    function buyItem(category, index) {
-      const item = items[category][index];
-      if (player.inventory[category][item.name]) {
-        if (category === 'furniture') {
-          player.selectedFurniture = item.name;
-        } else if (category === 'clothes') {
-          applyCloth(item.name);
-        }
-        showCategory(category);
-        saveToStorage();
-        return;
-      }
-
-      if (player.stars >= item.price) {
-        player.stars -= item.price;
-        player.inventory[category][item.name] = true;
-        updateBars();
-        playSound('buySound');
-        showCategory(category);
-        saveToStorage();
-      } else {
-        playSound('clickSound');
-        alert("Не хватает звёзд!");
-      }
-    }
-
-    // --- Одежда ---
-    let currentClothModel = null;
-    const clothModels = {
-      'Тога': 'https://models.babylonjs.com/Assets/CharacterPack/characterPack02.glb ',
-      'Шлем': 'https://models.babylonjs.com/Assets/Helmet/helmet.glb ',
-      'Римский воин': 'https://models.babylonjs.com/Assets/Soldier/soldier.glb '
-    };
-
-    function applyCloth(clothName) {
-      if (!clothModels[clothName]) return console.warn(`Модель "${clothName}" не найдена`);
-
-      if (currentClothModel) {
-        scene.remove(currentClothModel);
-        currentClothModel = null;
-      }
-
-      const loader = new THREE.GLTFLoader();
-
-      loader.load(
-        clothModels[clothName],
-        gltf => {
-          currentClothModel = gltf.scene;
-          currentClothModel.scale.set(0.5, 0.5, 0.5);
-          raccoonModel.add(currentClothModel);
-          updateClothSelection(clothName);
-          alert(`Рикки надел: ${clothName}`);
-        },
-        undefined,
-        error => console.error(`Ошибка загрузки "${clothName}":`, error)
-      );
-    }
-
-    function updateClothSelection(selected) {
-      document.querySelectorAll("#clothesPreviewList img").forEach(img => {
-        img.classList.remove("selected");
-        if (img.dataset.name === selected) {
-          img.classList.add("selected");
-        }
-      });
-    }
-
-    function openClothesCatalog(cloth) {
-      const catalog = document.getElementById("clothesCatalog");
-      const previewList = document.getElementById("clothesPreviewList");
-      previewList.innerHTML = '';
-
-      Object.keys(player.inventory.clothes).forEach(name => {
-        const item = items.clothes.find(c => c.name === name);
-        if (!item) return;
-
-        const div = document.createElement("div");
-        div.className = "preview-item";
-        div.innerHTML = `
-          <img src="${getClothThumbnail(name)}" alt="${name}" data-name="${name}" />
-          <p>${name}</p>
-        `;
-        div.querySelector("img").onclick = () => applyCloth(name);
-        previewList.appendChild(div);
-      });
-
-      catalog.style.display = 'block';
-      document.getElementById("store").classList.add("hidden");
-    }
-
-    function closeClothesCatalog() {
-      document.getElementById("clothesCatalog").style.display = 'none';
-      document.getElementById("store").classList.remove("hidden");
-    }
-
-    function getClothThumbnail(name) {
-      switch (name) {
-        case "Тога":
-          return "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Roman_toga.png/240px-Roman_toga.png ";
-        case "Шлем":
-          return "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Viking_Helmet.jpg/240px-Viking_Helmet.jpg ";
-        case "Щит":
-          return "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Shield_of_arms_of_Silesian_Brandenburg_vassals_%2814th_century%29.svg/240px-Shield_of_arms_of_Silesian_Brandenburg_vassals_%2814th_century%29.svg.png ";
-        case "Римский воин":
-          return "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Lorica_segmentata.jpg/240px-Lorica_segmentata.jpg ";
-        default:
-          return "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Toga_Barberini_front.jpg/240px-Toga_Barberini_front.jpg ";
-      }
-    }
-
-    // --- Игры ---
-
-    function startMemoryGame() {
-      const game = document.getElementById("gameContent");
-      game.innerHTML = `
-        <h3 class="bounce">🕰 Найди пару</h3>
-        <p>Нажми на одинаковые карточки!</p>
-        <div class="memory-grid bounce" id="memoryGrid"></div>
-        <button class="bounce" onclick="backToRoom()">Назад</button>
-      `;
-      showScreen('games');
-
-      const cards = ['🍎','🍌','🍇','🍉','🍒','🍓','🍍','🥭'];
-      const doubleCards = [...cards, ...cards].sort(() => 0.5 - Math.random());
-
-      const grid = document.getElementById("memoryGrid");
-      grid.innerHTML = '';
-
-      let firstCard = null;
-      let secondCard = null;
-      let lockBoard = false;
-      let matchedCount = 0;
-
-      doubleCards.forEach(icon => {
-        const card = document.createElement("div");
-        card.className = "memory-card";
-        card.dataset.icon = icon;
-        card.innerText = icon;
-        card.addEventListener("click", () => {
-          if (lockBoard || card.classList.contains("flipped") || card === firstCard) return;
-
-          card.classList.add("flipped");
-
-          if (!firstCard) {
-            firstCard = card;
-          } else {
-            secondCard = card;
-            lockBoard = true;
-
-            if (firstCard.dataset.icon === secondCard.dataset.icon) {
-              matchedCount += 2;
-              firstCard = secondCard = null;
-              lockBoard = false;
-              if (matchedCount === doubleCards.length) {
-                setTimeout(() => {
-                  alert("Победа! Получено 10 звёзд!");
-                  player.stars += 10;
-                  updateBars();
-                  saveToStorage();
-                  backToRoom();
-                }, 500);
-              }
-            } else {
-              setTimeout(() => {
-                firstCard.classList.remove("flipped");
-                secondCard.classList.remove("flipped");
-                firstCard = secondCard = null;
-                lockBoard = false;
-              }, 1000);
-            }
-          }
-        });
-
-        grid.appendChild(card);
-      });
-
-      // Показываем все карточки на 5 секунд
-      showAllCards(doubleCards.length);
-    }
-
-    function showAllCards(totalPairs) {
-      const cards = document.querySelectorAll(".memory-card");
-      cards.forEach(card => card.classList.add("flipped"));
-
-      setTimeout(() => {
-        cards.forEach(card => card.classList.remove("flipped"));
-      }, 5000);
-    }
-
-    function startGuessNumberGame() {
-      const game = document.getElementById("gameContent");
-      const number = Math.floor(Math.random() * 100) + 1;
-      let attempts = 0;
-
-      game.innerHTML = `
-        <h3 class="bounce">🧠 Угадай число (1–100)</h3>
-        <input type="number" id="guessInput" min="1" max="100" />
-        <button class="bounce" onclick="checkGuess(${number}, this)">Проверить</button>
-        <p id="guessResult"></p>
-        <button class="bounce" onclick="backToRoom()">Назад</button>
-      `;
-      showScreen('games');
-    }
-
-    function checkGuess(number, btnEl) {
-      const input = document.getElementById("guessInput");
-      const result = document.getElementById("guessResult");
-      const val = parseInt(input.value);
-
-      if (isNaN(val)) return alert("Введите число!");
-
-      if (val < number) {
-        result.textContent = "Число больше!";
-      } else if (val > number) {
-        result.textContent = "Число меньше!";
-      } else {
-        result.textContent = "Правильно! Получено 5 звёзд!";
-        player.stars += 5;
-        updateBars();
-        saveToStorage();
-        btnEl.disabled = true;
-      }
-    }
-
-    function startSnakeGame() {
-      const game = document.getElementById("gameContent");
-      game.innerHTML = `
-        <h3 class="bounce">🐍 Игра Змейка</h3>
-        <canvas id="snakeCanvas" width="400" height="400"></canvas>
-        <p>Очки: <span id="snakeScore">0</span></p>
-        <button class="bounce" onclick="initSnakeGame()">Начать</button>
-        <button class="bounce" onclick="backToRoom()">Назад</button>
-      `;
-      showScreen('games');
-    }
-
-    let snake, food, direction, score, gameInterval;
-    const canvas = document.getElementById("snakeCanvas");
-    const ctx = canvas.getContext("2d");
-    const gridSize = 20;
-    const tileCount = canvas.width / gridSize;
-
-    function initSnakeGame() {
-      snake = [{x: 10, y: 10}];
-      direction = {x: 0, y: 0};
-      score = 0;
-      generateFood();
-
-      if (gameInterval) clearInterval(gameInterval);
-      gameInterval = setInterval(updateSnakeGame, 150);
-    }
-
-    function generateFood() {
-      food = {
-        x: Math.floor(Math.random() * tileCount),
-        y: Math.floor(Math.random() * tileCount)
-      };
-    }
-
-    function drawTile(x, y, color) {
-      ctx.fillStyle = color;
-      ctx.fillRect(x * gridSize, y * gridSize, gridSize - 2, gridSize - 2);
-    }
-
-    function updateSnakeGame() {
-      const head = {x: snake[0].x + direction.x, y: snake[0].y + direction.y};
-
-      if (
-        head.x < 0 || head.x >= tileCount ||
-        head.y < 0 || head.y >= tileCount ||
-        snake.some(seg => seg.x === head.x && seg.y === head.y)
-      ) {
-        endSnakeGame();
-        return;
-      }
-
-      snake.unshift(head);
-
-      if (head.x === food.x && head.y === food.y) {
-        score += 10;
-        generateFood();
-
-        player.stars += 5;
-        updateBars();
-        saveToStorage();
-      } else {
-        snake.pop();
-      }
-
-      drawSnakeGame();
-    }
-
-    function drawSnakeGame() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      snake.forEach((segment, index) =>
-        drawTile(segment.x, segment.y, index === 0 ? "#8B4513" : "#A0522D")
-      );
-
-      drawTile(food.x, food.y, "green");
-    }
-
-    function endSnakeGame() {
-      clearInterval(gameInterval);
-      alert(`Игра окончена! Ты набрал ${score} очков и получил 5 звёзд!`);
-      backToRoom();
-    }
-
-    window.addEventListener('keydown', changeDirection);
-
-    function changeDirection(e) {
-      switch (e.key) {
-        case "ArrowUp":
-          if (direction.y === 0) direction = {x: 0, y: -1};
-          break;
-        case "ArrowDown":
-          if (direction.y === 0) direction = {x: 0, y: 1};
-          break;
-        case "ArrowLeft":
-          if (direction.x === 0) direction = {x: -1, y: 0};
-          break;
-        case "ArrowRight":
-          if (direction.x === 0) direction = {x: 1, y: 0};
-          break;
-      }
-    }
-
-    // --- Three.js модель ---
-
-    let scene, camera, renderer, raccoonModel;
-
-    function initRaccoonModel() {
-      const container = document.getElementById("raccoon-container");
-
-      scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x87ceeb);
-
-      camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-      camera.position.set(0, 1.5, 3);
-
-      renderer = new THREE.WebGLRenderer({ antialias: true });
-      renderer.setSize(container.clientWidth, container.clientHeight);
-      container.appendChild(renderer.domElement);
-
-      const ambientLight = new THREE.AmbientLight(0xffffff, 1);
-      scene.add(ambientLight);
-
-      const loader = new THREE.GLTFLoader();
-      loader.load(
-        'https://models.babylonjs.com/Assets/CharacterPack/characterPack01.glb ',
-        gltf => {
-          raccoonModel = gltf.scene;
-          raccoonModel.scale.set(0.5, 0.5, 0.5);
-          scene.add(raccoonModel);
-          animateRaccoon();
-        },
-        undefined,
-        error => console.error('Ошибка загрузки модели:', error)
-      );
-
-      const controls = new THREE.OrbitControls(camera, renderer.domElement);
-      controls.enablePan = false;
-      controls.enableZoom = false;
-      controls.autoRotate = true;
-      controls.autoRotateSpeed = 0.2;
-    }
-
-    function animateRaccoon() {
-      requestAnimationFrame(animateRaccoon);
-      renderer.render(scene, camera);
-    }
-
-    // --- Система отображения экранов ---
-    document.querySelectorAll('.screen').forEach(screen => {
-      screen.classList.add('animated');
-    });
-
-    // --- Переключатель звука ---
-    const soundToggle = document.getElementById("soundToggle");
-
-    // --- Запуск игры ---
-    loadFromStorage();
-    updateBars();
-
-    // --- Запуск ---
-    if (!localStorage.getItem('ricky-game')) {
-      namePopup.classList.remove('hidden');
-    } else {
-      initRaccoonModel();
-    }
-  </script>
+  <!-- Подключение app.js -->
+  <script src="app.js"></script>
 </body>
 </html>
