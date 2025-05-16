@@ -1,0 +1,37 @@
+body {
+  font-family: 'Comic Sans MS', sans-serif;
+  background: #fef5e7;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.room {
+  text-align: center;
+}
+#rikki-svg {
+  margin: 20px;
+}
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+.btn {
+  padding: 15px 20px;
+  font-size: 18px;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+}
+.orange { background-color: #ffa500; color: white; }
+.red { background-color: #ff4444; color: white; }
+.purple { background-color: #b266ff; color: white; }
+.blue { background-color: #3399ff; color: white; }
+.green { background-color: #33cc33; color: white; }
+.modal {
+  margin-top: 20px;
+}
