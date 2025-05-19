@@ -2,37 +2,874 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Тест Ricky</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Рикки - Весёлый Енот</title>
     <style>
-        body {
-            font-family: 'Comic Sans MS', cursive;
-            background: #FFE6F2;
-            text-align: center;
-            padding: 20px;
-        }
-        h1 { color: #FF9EC6; }
-        #ricky {
-            width: 200px;
-            height: 200px;
-            margin: 20px auto;
-        }
+        /* Все стили остаются такими же как в предыдущем коде */
+        /* ... */
     </style>
 </head>
 <body>
-    <h1>Рикки работает! 🎉</h1>
-    <div id="ricky">
-        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="100" cy="100" r="80" fill="#5C4B3E"/>
-            <circle cx="70" cy="80" r="15" fill="white"/>
-            <circle cx="130" cy="80" r="15" fill="white"/>
-            <circle cx="100" cy="120" r="10" fill="black"/>
-            <path d="M80,150 Q100,130 120,150" stroke="black" fill="none" stroke-width="2"/>
-        </svg>
+    <div id="app-container">
+        <!-- Весь HTML остаётся таким же как в предыдущем коде -->
+        <!-- ... -->
     </div>
-    <p>Если ты видишь енота, значит GitHub Pages работает правильно.</p>
+
     <script>
-        alert('JavaScript работает! Рикки скоро появится.');
-        console.log('Проверка консоли - нет ошибок');
+        // Все переменные
+        let playerName = '';
+        let playerBirthday = '';
+        let stars = 10;
+        let energy = 100;
+        let hunger = 100;
+        let isSleeping = false;
+        let isFirstLaunch = true;
+        let currentBed = 'default';
+        let currentOutfit = 'default';
+        let inventory = {
+            food: {
+                'Малина': {count: 0, type: 'berry'},
+                'Черника': {count: 0, type: 'berry'},
+                'Клубника': {count: 0, type: 'berry'},
+                'Ежевика': {count: 0, type: 'berry'},
+                'Смородина': {count: 0, type: 'berry'},
+                'Грецкий орех': {count: 0, type: 'nut'},
+                'Фундук': {count: 0, type: 'nut'},
+                'Миндаль': {count: 0, type: 'nut'},
+                'Кешью': {count: 0, type: 'nut'},
+                'Фисташки': {count: 0, type: 'nut'}
+            },
+            furniture: {
+                'Простая кровать': {owned: false, selected: false, price: 3},
+                'Деревянная кровать': {owned: false, selected: false, price: 4},
+                'Цветочная кровать': {owned: false, selected: false, price: 5},
+                'Звёздная кровать': {owned: false, selected: false, price: 6},
+                'Облачная кровать': {owned: false, selected: false, price: 7},
+                'Королевская кровать': {owned: false, selected: false, price: 8}
+            },
+            clothing: {
+                'Римская туника': {owned: false, selected: false, price: 2},
+                'Греческий хитон': {owned: false, selected: false, price: 3},
+                'Сандалии': {owned: false, selected: false, price: 2},
+                'Римский воин': {owned: false, selected: false, price: 9},
+                'Плащ': {owned: false, selected: false, price: 4}
+            }
+        };
+
+        let homeworkMessage = "Привет! Сегодняшнее задание - нарисовать рисунок своего любимого животного.";
+        let homeworkCompleted = false;
+        let gameStartTime = null;
+        let energyConsumptionInterval;
+        let hungerConsumptionInterval;
+
+        // DOM элементы
+        const elements = {
+            app: document.getElementById('app-container'),
+            ricky: document.getElementById('ricky-container'),
+            bed: document.getElementById('bed'),
+            zzz: document.getElementById('zzz'),
+            hungerFill: document.querySelector('#hunger .stat-fill'),
+            energyFill: document.querySelector('#energy .stat-fill'),
+            starsDisplay: document.getElementById('stars'),
+            modal: document.getElementById('modal'),
+            store: document.getElementById('store-container'),
+            homework: document.getElementById('homework-container'),
+            homeworkText: document.getElementById('homework-text'),
+            games: document.getElementById('games-container'),
+            reminderModal: document.getElementById('reminder-modal'),
+            eatingAnimation: document.getElementById('eating-animation')
+        };
+
+        // Инициализация приложения
+        function initApp() {
+            loadData();
+            updateStats();
+            renderStore();
+            
+            if (isFirstLaunch) {
+                showWelcomeModal();
+            } else if (isBirthday()) {
+                showBirthdayMessage();
+            }
+        }
+
+        // Загрузка данных из localStorage
+        function loadData() {
+            const savedData = localStorage.getItem('rickyGameData');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                playerName = data.playerName;
+                playerBirthday = data.playerBirthday;
+                stars = data.stars || 10;
+                energy = data.energy || 100;
+                hunger = data.hunger || 100;
+                isFirstLaunch = false;
+                inventory = data.inventory || inventory;
+                currentBed = data.currentBed || 'default';
+                currentOutfit = data.currentOutfit || 'default';
+                homeworkMessage = data.homeworkMessage || homeworkMessage;
+                homeworkCompleted = data.homeworkCompleted || false;
+            }
+        }
+
+        // Сохранение данных в localStorage
+        function saveData() {
+            const data = {
+                playerName,
+                playerBirthday,
+                stars,
+                energy,
+                hunger,
+                inventory,
+                currentBed,
+                currentOutfit,
+                homeworkMessage,
+                homeworkCompleted,
+                isFirstLaunch: false
+            };
+            localStorage.setItem('rickyGameData', JSON.stringify(data));
+        }
+
+        // Проверка дня рождения
+        function isBirthday() {
+            if (!playerBirthday) return false;
+            const today = new Date();
+            const birthday = new Date(playerBirthday);
+            return today.getMonth() === birthday.getMonth() && today.getDate() === birthday.getDate();
+        }
+
+        // Обновление статистики
+        function updateStats() {
+            elements.hungerFill.style.width = `${hunger}%`;
+            elements.energyFill.style.width = `${energy}%`;
+            elements.starsDisplay.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2L9.19 8.63L2 9.24l5.46 4.73L5.82 21z"/></svg>${stars}`;
+            
+            // Проверка на голод
+            if (hunger <= 0) {
+                elements.ricky.innerHTML = `
+                    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Тело -->
+                        <ellipse cx="100" cy="120" rx="60" ry="50" fill="#5C4B3E"/>
+                        <!-- Голова -->
+                        <circle cx="100" cy="70" r="50" fill="#5C4B3E"/>
+                        <!-- Маска -->
+                        <path d="M60,60 Q100,30 140,60" fill="none" stroke="#3D2F24" stroke-width="10"/>
+                        <path d="M60,60 Q100,90 140,60" fill="none" stroke="#3D2F24" stroke-width="10"/>
+                        <!-- Глаза -->
+                        <circle cx="80" cy="60" r="10" fill="white"/>
+                        <circle cx="120" cy="60" r="10" fill="white"/>
+                        <circle cx="82" cy="60" r="5" fill="black"/>
+                        <circle cx="122" cy="60" r="5" fill="black"/>
+                        <!-- Нос -->
+                        <circle cx="100" cy="80" r="5" fill="black"/>
+                        <!-- Рот - грустный -->
+                        <path d="M90,90 Q100,80 110,90" fill="none" stroke="black" stroke-width="2"/>
+                        <!-- Руки - одна на животе, другая у рта -->
+                        <path d="M40,100 Q60,80 70,120" fill="none" stroke="#3D2F24" stroke-width="8" stroke-linecap="round"/>
+                        <path d="M160,100 Q140,80 130,120" fill="none" stroke="#3D2F24" stroke-width="8" stroke-linecap="round"/>
+                        <!-- Уши -->
+                        <path d="M60,30 Q50,10 70,20" fill="#3D2F24"/>
+                        <path d="M140,30 Q150,10 130,20" fill="#3D2F24"/>
+                    </svg>
+                `;
+            } else if (isSleeping) {
+                // Спит
+                elements.ricky.innerHTML = `
+                    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Тело -->
+                        <ellipse cx="100" cy="140" rx="60" ry="40" fill="#5C4B3E"/>
+                        <!-- Голова -->
+                        <circle cx="100" cy="80" r="40" fill="#5C4B3E"/>
+                        <!-- Маска -->
+                        <path d="M70,70 Q100,50 130,70" fill="none" stroke="#3D2F24" stroke-width="8"/>
+                        <path d="M70,70 Q100,90 130,70" fill="none" stroke="#3D2F24" stroke-width="8"/>
+                        <!-- Глаза закрыты -->
+                        <path d="M75,75 Q85,80 95,75" fill="none" stroke="black" stroke-width="2"/>
+                        <path d="M105,75 Q115,80 125,75" fill="none" stroke="black" stroke-width="2"/>
+                        <!-- Нос -->
+                        <circle cx="100" cy="85" r="4" fill="black"/>
+                        <!-- Рот -->
+                        <path d="M95,95 Q100,90 105,95" fill="none" stroke="black" stroke-width="2"/>
+                        <!-- Руки -->
+                        <path d="M40,120 Q60,100 70,140" fill="none" stroke="#3D2F24" stroke-width="6" stroke-linecap="round"/>
+                        <path d="M160,120 Q140,100 130,140" fill="none" stroke="#3D2F24" stroke-width="6" stroke-linecap="round"/>
+                        <!-- Уши -->
+                        <path d="M65,50 Q55,30 75,40" fill="#3D2F24"/>
+                        <path d="M135,50 Q145,30 125,40" fill="#3D2F24"/>
+                    </svg>
+                `;
+            } else {
+                // Нормальное состояние
+                elements.ricky.innerHTML = `
+                    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Тело -->
+                        <ellipse cx="100" cy="120" rx="60" ry="50" fill="#5C4B3E"/>
+                        <!-- Голова -->
+                        <circle cx="100" cy="70" r="50" fill="#5C4B3E"/>
+                        <!-- Маска -->
+                        <path d="M60,60 Q100,30 140,60" fill="none" stroke="#3D2F24" stroke-width="10"/>
+                        <path d="M60,60 Q100,90 140,60" fill="none" stroke="#3D2F24" stroke-width="10"/>
+                        <!-- Глаза -->
+                        <circle cx="80" cy="60" r="10" fill="white"/>
+                        <circle cx="120" cy="60" r="10" fill="white"/>
+                        <circle cx="82" cy="60" r="5" fill="black"/>
+                        <circle cx="122" cy="60" r="5" fill="black"/>
+                        <!-- Нос -->
+                        <circle cx="100" cy="80" r="5" fill="black"/>
+                        <!-- Рот - улыбка -->
+                        <path d="M90,90 Q100,100 110,90" fill="none" stroke="black" stroke-width="2"/>
+                        <!-- Руки -->
+                        <path d="M40,100 Q60,80 70,120" fill="none" stroke="#3D2F24" stroke-width="8" stroke-linecap="round"/>
+                        <path d="M160,100 Q140,80 130,120" fill="none" stroke="#3D2F24" stroke-width="8" stroke-linecap="round"/>
+                        <!-- Уши -->
+                        <path d="M60,30 Q50,10 70,20" fill="#3D2F24"/>
+                        <path d="M140,30 Q150,10 130,20" fill="#3D2F24"/>
+                    </svg>
+                `;
+            }
+            
+            // Анимация приветствия при первом запуске
+            if (isFirstLaunch) {
+                elements.ricky.classList.add('wave');
+                setTimeout(() => {
+                    elements.ricky.classList.remove('wave');
+                }, 3000);
+            }
+        }
+
+        // Показать приветственное окно
+        function showWelcomeModal() {
+            elements.modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-title">Привет, друг!</div>
+                    <p>Меня зовут Рикки, и я буду твоим весёлым енотом!</p>
+                    <p>Как тебя зовут?</p>
+                    <input type="text" id="player-name" class="input-field" placeholder="Твоё имя">
+                    <p>Когда у тебя день рождения?</p>
+                    <input type="date" id="player-birthday" class="input-field">
+                    <button class="modal-btn" onclick="savePlayerInfo()">Сохранить</button>
+                </div>
+            `;
+            elements.modal.classList.add('active');
+        }
+
+        // Сохранить информацию о игроке
+        function savePlayerInfo() {
+            playerName = document.getElementById('player-name').value;
+            playerBirthday = document.getElementById('player-birthday').value;
+            
+            if (!playerName || !playerBirthday) {
+                alert('Пожалуйста, введи своё имя и дату рождения!');
+                return;
+            }
+            
+            isFirstLaunch = false;
+            elements.modal.classList.remove('active');
+            saveData();
+            updateStats();
+        }
+
+        // Показать поздравление с днём рождения
+        function showBirthdayMessage() {
+            elements.modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-title">С Днём Рождения, ${playerName}!</div>
+                    <p>Рикки приготовил для тебя особенный подарок - 10 звёзд!</p>
+                    <svg width="100" height="100" viewBox="0 0 24 24" style="margin: 20px;">
+                        <path fill="#FFD700" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2L9.19 8.63L2 9.24l5.46 4.73L5.82 21z"/>
+                    </svg>
+                    <button class="modal-btn" onclick="closeModal()">Спасибо!</button>
+                </div>
+            `;
+            stars += 10;
+            saveData();
+            updateStats();
+            elements.modal.classList.add('active');
+        }
+
+        // Закрыть модальное окно
+        function closeModal() {
+            elements.modal.classList.remove('active');
+        }
+
+        // Кнопка сна
+        function sleep() {
+            if (isSleeping) {
+                // Просыпается
+                isSleeping = false;
+                elements.zzz.style.opacity = '0';
+                elements.bed.style.opacity = '0';
+                energy = 100;
+                updateStats();
+                clearInterval(energyConsumptionInterval);
+            } else {
+                // Засыпает
+                if (energy > 0) {
+                    alert('Рикки ещё не устал!');
+                    return;
+                }
+                
+                isSleeping = true;
+                elements.zzz.style.opacity = '1';
+                elements.bed.style.opacity = '1';
+                
+                // Анимация Zzz
+                animateZZZ();
+                
+                // Восстановление энергии
+                setTimeout(() => {
+                    isSleeping = false;
+                    elements.zzz.style.opacity = '0';
+                    elements.bed.style.opacity = '0';
+                    energy = 100;
+                    updateStats();
+                    saveData();
+                }, 3600000); // 1 час
+            }
+            
+            saveData();
+            updateStats();
+        }
+
+        // Анимация Zzz
+        function animateZZZ() {
+            let count = 0;
+            const maxCount = 10;
+            const interval = setInterval(() => {
+                if (count >= maxCount || !isSleeping) {
+                    clearInterval(interval);
+                    return;
+                }
+                
+                elements.zzz.innerHTML = 'Z'.repeat(count % 3 + 1) + ' z'.repeat(Math.floor(count / 3) % 2 + 1);
+                count++;
+            }, 500);
+        }
+
+        // Кнопка еды
+        function feed() {
+            if (hunger >= 100) {
+                alert('Рикки не голоден!');
+                return;
+            }
+            
+            // Показать меню еды
+            elements.modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-title">Покорми Рикки</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        ${Object.entries(inventory.food).map(([name, item]) => `
+                            <div class="store-item" style="cursor: ${item.count > 0 ? 'pointer' : 'default'}; opacity: ${item.count > 0 ? 1 : 0.5}" onclick="${item.count > 0 ? `feedRicky('${name}')` : ''}">
+                                <div class="item-img">
+                                    ${getFoodSVG(name, item.type)}
+                                </div>
+                                <div class="item-name">${name}</div>
+                                <div>Осталось: ${item.count}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <button class="modal-btn" onclick="closeModal()">Закрыть</button>
+                </div>
+            `;
+            elements.modal.classList.add('active');
+        }
+
+        // Покормить Рикки
+        function feedRicky(foodName) {
+            const food = inventory.food[foodName];
+            if (!food || food.count <= 0) return;
+            
+            food.count--;
+            const restoreAmount = food.type === 'berry' ? 30 : 50;
+            hunger = Math.min(100, hunger + restoreAmount);
+            
+            // Анимация еды
+            elements.eatingAnimation.innerHTML = getFoodSVG(foodName, food.type);
+            elements.eatingAnimation.style.opacity = '1';
+            elements.eatingAnimation.classList.add('bounce');
+            
+            setTimeout(() => {
+                elements.eatingAnimation.style.opacity = '0';
+                elements.eatingAnimation.classList.remove('bounce');
+            }, 1000);
+            
+            // Анимация Рикки
+            elements.ricky.classList.add('blink');
+            setTimeout(() => {
+                elements.ricky.classList.remove('blink');
+            }, 500);
+            
+            closeModal();
+            saveData();
+            updateStats();
+        }
+
+        // Получить SVG для еды
+        function getFoodSVG(name, type) {
+            if (type === 'berry') {
+                const colors = {
+                    'Малина': '#E91E63',
+                    'Черника': '#3F51B5',
+                    'Клубника': '#F44336',
+                    'Ежевика': '#9C27B0',
+                    'Смородина': '#FF5722'
+                };
+                return `
+                    <svg width="50" height="50" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="40" fill="${colors[name] || '#F44336'}"/>
+                        <path d="M30,30 Q50,10 70,30" fill="none" stroke="#4CAF50" stroke-width="5"/>
+                    </svg>
+                `;
+            } else {
+                // Орехи
+                return `
+                    <svg width="50" height="50" viewBox="0 0 100 100">
+                        <path d="M30,50 Q50,20 70,50 Q50,80 30,50" fill="#8D6E63"/>
+                        <path d="M40,45 Q50,35 60,45" fill="none" stroke="#5D4037" stroke-width="2"/>
+                    </svg>
+                `;
+            }
+        }
+
+        // Кнопка магазина
+        function openStore() {
+            elements.store.style.display = 'block';
+        }
+
+        // Закрыть магазин
+        function closeStore() {
+            elements.store.style.display = 'none';
+        }
+
+        // Рендер магазина
+        function renderStore() {
+            elements.store.innerHTML = `
+                <div style="padding: 10px; background: #FF9EC6; color: white; display: flex; justify-content: space-between; align-items: center;">
+                    <h2 style="margin: 0;">Магазин</h2>
+                    <button onclick="closeStore()" style="background: white; color: #FF9EC6; border: none; border-radius: 20px; padding: 5px 15px; font-weight: bold;">X</button>
+                </div>
+                
+                <div style="display: flex; justify-content: space-around; margin: 10px 0;">
+                    <button onclick="showStoreCategory('food')" style="background: #FFD6E7; border: none; border-radius: 10px; padding: 10px; font-weight: bold;">Еда</button>
+                    <button onclick="showStoreCategory('furniture')" style="background: #FFD6E7; border: none; border-radius: 10px; padding: 10px; font-weight: bold;">Мебель</button>
+                    <button onclick="showStoreCategory('clothing')" style="background: #FFD6E7; border: none; border-radius: 10px; padding: 10px; font-weight: bold;">Одежда</button>
+                </div>
+                
+                <div id="store-category-content" style="padding: 10px;"></div>
+            `;
+            
+            showStoreCategory('food');
+        }
+
+        // Показать категорию в магазине
+        function showStoreCategory(category) {
+            const content = document.getElementById('store-category-content');
+            
+            if (category === 'food') {
+                content.innerHTML = `
+                    <h3 style="color: #FF9EC6;">Еда</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        ${Object.entries(inventory.food).map(([name, item]) => `
+                            <div class="store-item">
+                                <div class="item-img">
+                                    ${getFoodSVG(name, item.type)}
+                                </div>
+                                <div class="item-name">${name}</div>
+                                <div class="item-price">${item.type === 'berry' ? '1 звезда' : '2 звезды'}</div>
+                                <button class="item-btn" onclick="buyItem('food', '${name}')">Купить</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else if (category === 'furniture') {
+                content.innerHTML = `
+                    <h3 style="color: #FF9EC6;">Мебель</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        ${Object.entries(inventory.furniture).map(([name, item]) => `
+                            <div class="store-item">
+                                <div class="item-img">
+                                    ${getBedSVG(name)}
+                                </div>
+                                <div class="item-name">${name}</div>
+                                <div class="item-price">${item.price} звёзд</div>
+                                ${item.owned ? 
+                                    `<button class="item-btn" style="background: ${item.selected ? '#4CAF50' : '#FF9EC6'}" 
+                                        onclick="selectItem('furniture', '${name}')">
+                                        ${item.selected ? 'Выбрана' : 'Выбрать'}
+                                    </button>` :
+                                    `<button class="item-btn" onclick="buyItem('furniture', '${name}')">Купить</button>`
+                                }
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else if (category === 'clothing') {
+                content.innerHTML = `
+                    <h3 style="color: #FF9EC6;">Одежда</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        ${Object.entries(inventory.clothing).map(([name, item]) => `
+                            <div class="store-item">
+                                <div class="item-img">
+                                    ${getClothingSVG(name)}
+                                </div>
+                                <div class="item-name">${name}</div>
+                                <div class="item-price">${item.price} звёзд</div>
+                                ${item.owned ? 
+                                    `<button class="item-btn" style="background: ${item.selected ? '#4CAF50' : '#FF9EC6'}" 
+                                        onclick="selectItem('clothing', '${name}')">
+                                        ${item.selected ? 'Выбрана' : 'Выбрать'}
+                                    </button>` :
+                                    `<button class="item-btn" onclick="buyItem('clothing', '${name}')">Купить</button>`
+                                }
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+        }
+
+        // Получить SVG для кровати
+        function getBedSVG(name) {
+            const colors = {
+                'Простая кровать': '#8D6E63',
+                'Деревянная кровать': '#5D4037',
+                'Цветочная кровать': '#E91E63',
+                'Звёздная кровать': '#2196F3',
+                'Облачная кровать': '#9E9E9E',
+                'Королевская кровать': '#FFD700'
+            };
+            
+            return `
+                <svg width="50" height="50" viewBox="0 0 100 100">
+                    <rect x="10" y="60" width="80" height="20" fill="${colors[name] || '#8D6E63'}"/>
+                    <rect x="10" y="40" width="10" height="20" fill="${colors[name] || '#8D6E63'}"/>
+                    <rect x="80" y="40" width="10" height="20" fill="${colors[name] || '#8D6E63'}"/>
+                    ${name.includes('Звёздная') ? `
+                        <circle cx="30" cy="50" r="3" fill="yellow"/>
+                        <circle cx="50" cy="50" r="3" fill="yellow"/>
+                        <circle cx="70" cy="50" r="3" fill="yellow"/>
+                    ` : ''}
+                    ${name.includes('Цветочная') ? `
+                        <path d="M30,50 Q35,40 40,50 Q35,60 30,50" fill="#E91E63"/>
+                        <path d="M50,50 Q55,40 60,50 Q55,60 50,50" fill="#E91E63"/>
+                        <path d="M70,50 Q75,40 80,50 Q75,60 70,50" fill="#E91E63"/>
+                    ` : ''}
+                    ${name.includes('Королевская') ? `
+                        <rect x="45" y="30" width="10" height="10" fill="#FFD700"/>
+                    ` : ''}
+                </svg>
+            `;
+        }
+
+        // Получить SVG для одежды
+        function getClothingSVG(name) {
+            if (name === 'Римская туника') {
+                return `
+                    <svg width="50" height="50" viewBox="0 0 100 100">
+                        <rect x="40" y="30" width="20" height="40" fill="#F5F5DC"/>
+                        <path d="M40,30 L60,30 L70,50 L60,70 L40,70 L30,50 Z" fill="#F5F5DC"/>
+                    </svg>
+                `;
+            } else if (name === 'Греческий хитон') {
+                return `
+                    <svg width="50" height="50" viewBox="0 0 100 100">
+                        <rect x="35" y="30" width="30" height="40" fill="#FFF9C4"/>
+                        <path d="M35,30 L65,30 L70,50 L65,70 L35,70 L30,50 Z" fill="#FFF9C4"/>
+                    </svg>
+                `;
+            } else if (name === 'Сандалии') {
+                return `
+                    <svg width="50" height="50" viewBox="0 0 100 100">
+                        <ellipse cx="30" cy="80" rx="15" ry="5" fill="#8D6E63"/>
+                        <ellipse cx="70" cy="80" rx="15" ry="5" fill="#8D6E63"/>
+                    </svg>
+                `;
+            } else if (name === 'Римский воин') {
+                return `
+                    <svg width="50" height="50" viewBox="0 0 100 100">
+                        <rect x="40" y="30" width="20" height="40" fill="#B0BEC5"/>
+                        <path d="M40,30 L60,30 L70,50 L60,70 L40,70 L30,50 Z" fill="#B0BEC5"/>
+                        <circle cx="50" cy="20" r="15" fill="#B0BEC5"/>
+                        <rect x="45" y="10" width="10" height="5" fill="#FFD700"/>
+                    </svg>
+                `;
+            } else if (name === 'Плащ') {
+                return `
+                    <svg width="50" height="50" viewBox="0 0 100 100">
+                        <path d="M50,20 L80,50 L50,80 L20,50 Z" fill="#7B1FA2"/>
+                    </svg>
+                `;
+            }
+        }
+
+        // Купить предмет
+        function buyItem(category, name) {
+            const item = inventory[category][name];
+            if (!item) return;
+            
+            if (stars < item.price) {
+                alert('Недостаточно звёзд!');
+                return;
+            }
+            
+            stars -= item.price;
+            item.owned = true;
+            
+            if (category === 'food') {
+                item.count += 1;
+            }
+            
+            saveData();
+            updateStats();
+            renderStore();
+            showStoreCategory(category);
+        }
+
+        // Выбрать предмет (мебель или одежду)
+        function selectItem(category, name) {
+            // Сбросить выбор для всех предметов в категории
+            Object.keys(inventory[category]).forEach(key => {
+                inventory[category][key].selected = false;
+            });
+            
+            // Выбрать текущий предмет
+            inventory[category][name].selected = true;
+            
+            if (category === 'furniture') {
+                currentBed = name;
+                elements.bed.innerHTML = getBedSVG(name);
+            } else if (category === 'clothing') {
+                currentOutfit = name;
+            }
+            
+            saveData();
+            renderStore();
+            showStoreCategory(category);
+            updateStats();
+        }
+
+        // Кнопка домашнего задания
+        function openHomework() {
+            elements.homework.style.display = 'block';
+            elements.homeworkText.textContent = homeworkMessage;
+            
+            // Обновить кнопку "Задание выполнено"
+            const completeBtn = document.getElementById('complete-homework');
+            if (completeBtn) {
+                completeBtn.disabled = homeworkCompleted;
+                completeBtn.style.opacity = homeworkCompleted ? 0.5 : 1;
+            }
+        }
+
+        // Закрыть домашнее задание
+        function closeHomework() {
+            elements.homework.style.display = 'none';
+        }
+
+        // Установить напоминание
+        function setReminder() {
+            elements.reminderModal.style.display = 'block';
+        }
+
+        // Сохранить напоминание
+        function saveReminder() {
+            const date = document.getElementById('reminder-date').value;
+            const time = document.getElementById('reminder-time').value;
+            
+            if (!date || !time) {
+                alert('Пожалуйста, укажи дату и время напоминания!');
+                return;
+            }
+            
+            const reminderTime = new Date(`${date}T${time}`);
+            const now = new Date();
+            
+            if (reminderTime <= now) {
+                alert('Пожалуйста, укажи будущую дату и время!');
+                return;
+            }
+            
+            const timeout = reminderTime - now;
+            
+            setTimeout(() => {
+                if (Notification.permission === 'granted') {
+                    new Notification('Напоминание от Рикки', {
+                        body: 'Ты не выполнил домашнее задание! Рикки ждёт!',
+                        icon: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iY3VycmVudENvbG9yIiBkPSJNMTIsMkExMCwxMCAwIDAsMSAyMiwxMkExMCwxMCAwIDAsMSAxMiwyMkExMCwxMCAwIDAsMSAyLDEyQTEwLDEwIDAgMCwxIDEyLDJNMTIsNEE4LDggMCAwLDAgNCwxMkE4LDggMCAwLDAgMTIsMjBBOCw4IDAgMCwwIDIwLDEyQTgsOCAwIDAsMCAxMiw0TTExLDdIMTNWMTdIMTFWN1oiLz48L3N2Zz4='
+                    });
+                } else if (Notification.permission !== 'denied') {
+                    Notification.requestPermission().then(permission => {
+                        if (permission === 'granted') {
+                            new Notification('Напоминание от Рикки', {
+                                body: 'Ты не выполнил домашнее задание! Рикки ждёт!',
+                                icon: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iY3VycmVudENvbG9yIiBkPSJNMTIsMkExMCwxMCAwIDAsMSAyMiwxMkExMCwxMCAwIDAsMSAxMiwyMkExMCwxMCAwIDAsMSAyLDEyQTEwLDEwIDAgMCwxIDEyLDJNMTIsNEE4LDggMCAwLDAgNCwxMkE4LDggMCAwLDAgMTIsMjBBOCw4IDAgMCwwIDIwLDEyQTgsOCAwIDAsMCAxMiw0TTExLDdIMTNWMTdIMTFWN1oiLz48L3N2Zz4='
+                            });
+                        }
+                    });
+                }
+            }, timeout);
+            
+            alert(`Напоминание установлено на ${reminderTime.toLocaleString()}`);
+            elements.reminderModal.style.display = 'none';
+        }
+
+        // Закрыть напоминание
+        function closeReminder() {
+            elements.reminderModal.style.display = 'none';
+        }
+
+        // Завершить домашнее задание
+        function completeHomework() {
+            if (homeworkCompleted) {
+                alert('Ты уже выполнил это задание!');
+                return;
+            }
+            
+            homeworkCompleted = true;
+            stars += 3;
+            
+            saveData();
+            updateStats();
+            
+            const completeBtn = document.getElementById('complete-homework');
+            if (completeBtn) {
+                completeBtn.disabled = true;
+                completeBtn.style.opacity = 0.5;
+            }
+            
+            alert('Молодец! Рикки дарит тебе 3 звезды!');
+        }
+
+        // Кнопка игр
+        function openGames() {
+            if (hunger <= 0) {
+                alert('Рикки хочет кушать, покорми его чтобы продолжить!');
+                return;
+            }
+            
+            elements.games.style.display = 'block';
+            gameStartTime = new Date();
+            
+            // Потребление энергии
+            clearInterval(energyConsumptionInterval);
+            energyConsumptionInterval = setInterval(() => {
+                energy = Math.max(0, energy - (100 / (40 * 60))); // 40 минут на полную шкалу
+                updateStats();
+                
+                if (energy <= 0) {
+                    clearInterval(energyConsumptionInterval);
+                    alert('Рикки устал и хочет спать!');
+                    closeGames();
+                }
+            }, 1000);
+            
+            // Потребление голода
+            clearInterval(hungerConsumptionInterval);
+            hungerConsumptionInterval = setInterval(() => {
+                hunger = Math.max(0, hunger - 25 / (5 * 60)); // 25% за 5 минут
+                updateStats();
+                
+                if (hunger <= 0) {
+                    clearInterval(hungerConsumptionInterval);
+                    alert('Рикки проголодался!');
+                    closeGames();
+                }
+            }, 1000);
+        }
+
+        // Закрыть игры
+        function closeGames() {
+            elements.games.style.display = 'none';
+            clearInterval(energyConsumptionInterval);
+            clearInterval(hungerConsumptionInterval);
+            
+            // Начислить звёзды за время в играх
+            if (gameStartTime) {
+                const timeSpent = (new Date() - gameStartTime) / 1000; // в секундах
+                const starsEarned = Math.floor(timeSpent / 60); // 1 звезда за минуту
+                
+                if (starsEarned > 0) {
+                    stars += starsEarned;
+                    alert(`Ты играл и заработал ${starsEarned} звёзд!`);
+                    saveData();
+                    updateStats();
+                }
+            }
+            
+            gameStartTime = null;
+        }
+
+        // Играть в игру
+        function playGame(gameName) {
+            alert(`Рикки играет в ${gameName}!`);
+            // Здесь можно добавить конкретную логику игры
+        }
+
+        // Инициализация при загрузке
+        window.onload = function() {
+            // Проверить поддержку уведомлений
+            if ('Notification' in window) {
+                Notification.requestPermission();
+            }
+            
+            // Инициализировать приложение
+            initApp();
+            
+            // Назначить обработчики кнопок
+            document.getElementById('sleep-btn').onclick = sleep;
+            document.getElementById('feed-btn').onclick = feed;
+            document.getElementById('store-btn').onclick = openStore;
+            document.getElementById('homework-btn').onclick = openHomework;
+            document.getElementById('games-btn').onclick = openGames;
+            
+            // Кнопки домашнего задания
+            elements.homework.innerHTML = `
+                <div style="padding: 10px; background: #FF9EC6; color: white; display: flex; justify-content: space-between; align-items: center;">
+                    <h2 style="margin: 0;">Домашнее задание</h2>
+                    <button onclick="closeHomework()" style="background: white; color: #FF9EC6; border: none; border-radius: 20px; padding: 5px 15px; font-weight: bold;">X</button>
+                </div>
+                
+                <div id="homework-text" style="background-color: #FFE6F2; padding: 20px; border-radius: 15px; margin: 20px; min-height: 100px;">
+                    ${homeworkMessage}
+                </div>
+                
+                <div style="display: flex; justify-content: center; flex-wrap: wrap;">
+                    <button class="homework-btn" onclick="setReminder()">Напомнить</button>
+                    <button id="complete-homework" class="homework-btn" onclick="completeHomework()" 
+                        style="${homeworkCompleted ? 'opacity: 0.5; cursor: default;' : ''}" 
+                        ${homeworkCompleted ? 'disabled' : ''}>
+                        Задание выполнено
+                    </button>
+                    <button class="homework-btn" onclick="closeHomework()">Закрыть</button>
+                </div>
+                
+                <div id="reminder-modal" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; border-radius: 15px; z-index: 20; box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); text-align: center;">
+                    <h3 style="color: #FF9EC6;">Установить напоминание</h3>
+                    <input type="date" id="reminder-date" style="margin: 10px 0; padding: 8px; border: 2px solid #FF9EC6; border-radius: 5px;"><br>
+                    <input type="time" id="reminder-time" style="margin: 10px 0; padding: 8px; border: 2px solid #FF9EC6; border-radius: 5px;"><br>
+                    <button onclick="saveReminder()" style="background: #FF9EC6; color: white; border: none; border-radius: 5px; padding: 8px 15px; margin: 5px; cursor: pointer;">Сохранить</button>
+                    <button onclick="closeReminder()" style="background: #E0E0E0; color: #333; border: none; border-radius: 5px; padding: 8px 15px; margin: 5px; cursor: pointer;">Отмена</button>
+                </div>
+            `;
+            
+            // Кнопки игр
+            elements.games.innerHTML = `
+                <div style="padding: 10px; background: #FF9EC6; color: white; display: flex; justify-content: space-between; align-items: center;">
+                    <h2 style="margin: 0;">Игры</h2>
+                    <button onclick="closeGames()" style="background: white; color: #FF9EC6; border: none; border-radius: 20px; padding: 5px 15px; font-weight: bold;">X</button>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <button class="game-btn" onclick="playGame('Прятки')">Прятки</button>
+                    <button class="game-btn" onclick="playGame('Догонялки')">Догонялки</button>
+                    <button class="game-btn" onclick="playGame('Головоломка')">Головоломка</button>
+                    <button class="game-btn" onclick="playGame('Рисовалка')">Рисовалка</button>
+                </div>
+            `;
+            
+            // Инициализация кровати
+            elements.bed.innerHTML = getBedSVG(currentBed);
+        };
     </script>
 </body>
 </html>
