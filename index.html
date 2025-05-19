@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Рикки — Твой друг!</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-container">
+
+    <!-- Приветствие и ввод имени -->
+    <div id="welcome-screen" class="screen">
+      <img src="assets/svg/ricky_wave.svg" alt="Рикки машет" class="ricky" />
+      <h2>Привет! Я Рикки!</h2>
+      <p>Как тебя зовут и когда у тебя день рождения?</p>
+      <input type="text" id="player-name" placeholder="Имя" />
+      <input type="date" id="player-dob" />
+      <button onclick="startGame()">Начать игру</button>
+    </div>
+
+    <!-- Главный экран -->
+    <div id="main-screen" class="screen hidden">
+      <div class="top-bar">
+        <span id="stars">10 ⭐</span>
+        <span id="health">Здоровье: 100%</span>
+        <span id="energy">Энергия: 100%</span>
+      </div>
+      <div class="room">
+        <img id="ricky-img" src="assets/svg/ricky_idle.svg" alt="Рикки" />
+        <div id="zzz" class="hidden">Z z z</div>
+      </div>
+      <div class="buttons">
+        <button onclick="openHomework()">Домашнее задание</button>
+        <button onclick="openGames()">Игры</button>
+        <button onclick="openStore()">Магазин</button>
+        <button onclick="goToSleep()">Сон</button>
+        <button onclick="openFood()">Кормить</button>
+      </div>
+    </div>
+
+    <!-- Экран с домашним заданием -->
+    <div id="homework-screen" class="screen hidden">
+      <h3>Домашнее задание</h3>
+      <p id="homework-text">Загрузка...</p>
+      <button onclick="setReminder()">Напомнить</button>
+      <button id="complete-btn" onclick="completeHomework()">Задание выполнено</button>
+      <button onclick="goHome()">Назад</button>
+    </div>
+
+    <!-- Экран с играми -->
+    <div id="games-screen" class="screen hidden">
+      <h3>Игры</h3>
+      <p>Выбирай игру и зарабатывай звёзды!</p>
+      <div class="game-list">
+        <button onclick="earnStars(1)">Поймай звезду</button>
+        <button onclick="earnStars(2)">Пазл</button>
+      </div>
+      <p id="games-warning" class="warning hidden">Рикки хочет кушать, покорми его чтобы продолжить!</p>
+      <button onclick="goHome()">Назад</button>
+    </div>
+
+    <!-- Магазин -->
+    <div id="store-screen" class="screen hidden">
+      <h3>Магазин</h3>
+      <div class="store-tabs">
+        <button onclick="openTab('food')">Еда</button>
+        <button onclick="openTab('furniture')">Мебель</button>
+        <button onclick="openTab('clothing')">Одежда</button>
+      </div>
+      <div id="store-content"></div>
+      <button onclick="goHome()">Назад</button>
+    </div>
+
+    <!-- Кормление -->
+    <div id="food-screen" class="screen hidden">
+      <h3>Кормление Рикки</h3>
+      <div id="food-items"></div>
+      <button onclick="goHome()">Назад</button>
+    </div>
+
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
