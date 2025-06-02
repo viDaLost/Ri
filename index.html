@@ -8,35 +8,56 @@
 </head>
 <body>
 
-  <!-- Приветствие -->
-  <div id="welcome-modal" class="modal visible">
+  <!-- Модальное окно: Регистрация -->
+  <div id="confirm-modal" class="modal">
     <div class="modal-content">
+      <span class="close-modal">&times;</span>
       <h2>Привет!</h2>
-      <p>Рикки хочет знать, когда у тебя день рождения и как тебя зовут!</p>
-      <input type="text" id="username" placeholder="Твоё имя"/>
-      <input type="date" id="birthdate"/>
-      <button onclick="confirmUserData()">Подтвердить</button>
+      <p>Расскажи Рикки своё имя и когда у тебя день рождения:</p>
+      <input type="text" id="name" placeholder="Твоё имя"/>
+      <input type="date" id="birth"/>
+      <button id="confirm-btn">Подтвердить</button>
     </div>
   </div>
 
-  <!-- Экран блокировки -->
-  <div id="lock-screen" class="modal">
+  <!-- Модальное окно: Сообщение о блокировке -->
+  <div id="message-modal" class="modal">
     <div class="modal-content">
-      <img src="img/tired.png" alt="Усталый Рикки" />
+      <span class="close-modal">&times;</span>
+      <img src="img/tired.png" alt="Усталый Рикки" style="max-width: 100px; margin-bottom: 10px;">
       <h2>Рикки устал</h2>
       <p>Вернись позже, и мы ещё поиграем!</p>
-      <button onclick="goToMainMenu()">Главное меню</button>
+      <button onclick="document.getElementById('message-modal').classList.remove('visible')">ОК</button>
     </div>
+  </div>
+
+  <!-- Модальное окно: Выполнение домашнего задания -->
+  <div id="homework-done-modal" class="modal">
+    <div class="modal-content">
+      <h2>Ты большой молодец!</h2>
+      <p>Проверим твои знания на детском занятии!</p>
+      <div class="fireworks" id="fireworks"></div>
+      <button onclick="document.getElementById('homework-done-modal').classList.remove('visible')">Закрыть</button>
+    </div>
+  </div>
+
+  <!-- Приветствие (не используется напрямую, но может быть использовано) -->
+  <div id="welcome-screen" class="screen hidden"></div>
+
+  <!-- Экран блокировки -->
+  <div id="block-screen" class="screen hidden">
+    <img src="img/tired.png" alt="Усталый Рикки" />
+    <h2>Рикки устал</h2>
+    <p>Вернись позже, и мы ещё поиграем!</p>
+    <button id="to-menu">Главное меню</button>
   </div>
 
   <!-- Главное меню -->
-  <div id="main-menu" class="screen hidden">
+  <div id="menu-screen" class="screen hidden">
     <img src="img/main.png" alt="Рикки" />
-    <p class="bubble">Привет, <span id="name-display">друг</span>! Я твой знакомый енот Рикки. Давай дружить!</p>
-    <div class="menu-buttons">
-      <button onclick="goToGameMenu()">Играть</button>
-      <button onclick="goToHomework()">Домашнее задание</button>
-    </div>
+    <p class="bubble">Привет, <span id="greet-name">друг</span>! Я твой знакомый енот Рикки. Давай дружить!</p>
+    <button id="play-button">Играть</button>
+    <button id="to-homework">Домашнее задание</button>
   </div>
 
   <!-- Меню игр -->
@@ -44,75 +65,68 @@
     <img src="img/choose.png" alt="Задумчивый Рикки" />
     <h2>Выбери игру</h2>
     <div class="menu-buttons">
-      <button onclick="startBibleGame()">Библейские загадки</button>
-      <button onclick="startPairGame()">Найди пару</button>
-      <button onclick="startPuzzleGame()">Помоги собрать</button>
+      <button id="riddle-btn">Библейские загадки</button>
+      <button id="pair-btn">Найди пару</button>
+      <button id="puzzle-btn">Помоги собрать</button>
     </div>
-    <div class="menu-buttons small">
-      <button onclick="goToMainMenu()">Главное меню</button>
-      <button disabled>К выбору игры</button>
-    </div>
+    <button id="to-menu">Главное меню</button>
   </div>
 
   <!-- Библейские загадки -->
-  <div id="bible-game" class="screen hidden">
+  <div id="riddle-screen" class="screen hidden">
     <h2>Библейские загадки</h2>
     <p id="riddle-text"></p>
-    <input type="text" id="riddle-answer" placeholder="Твой ответ"/>
-    <button onclick="checkRiddleAnswer()">Ответить</button>
-    <div id="riddle-feedback" class="hidden">
+    <input type="text" id="riddle-input" placeholder="Твой ответ"/>
+    <button id="riddle-submit">Ответить</button>
+    <div id="riddle-result"></div>
+    <div id="riddle-win" style="display:none;">
       <img src="img/win.png" alt="Победа"/>
       <p>Молодец!</p>
-      <button onclick="nextRiddle()">Следующая загадка</button>
+      <button id="next-riddle">Следующая загадка</button>
     </div>
-    <button onclick="goToGameMenu()">Назад</button>
+    <button id="to-game-menu">Назад</button>
   </div>
 
   <!-- Найди пару -->
-  <div id="pair-game" class="screen hidden">
+  <div id="pair-screen" class="screen hidden">
     <h2>Найди пару</h2>
     <div id="pair-board"></div>
-    <div id="pair-win" class="hidden">
+    <div id="pair-win" style="display:none;">
       <img src="img/win.png" alt="Победа"/>
       <p>Ты справился!</p>
-      <button onclick="goToGameMenu()">Назад</button>
+      <button id="to-game-menu">Назад</button>
     </div>
   </div>
 
   <!-- Пазл -->
-  <div id="puzzle-game" class="screen hidden">
+  <div id="puzzle-screen" class="screen hidden">
     <h2>Помоги собрать</h2>
     <div id="puzzle-board"></div>
     <div id="puzzle-pieces"></div>
-    <div id="puzzle-win" class="hidden">
+    <div id="puzzle-win" style="display:none;">
       <img src="img/win.png" alt="Победа"/>
       <p>Пазл собран!</p>
-      <button onclick="goToGameMenu()">Назад</button>
+      <button id="to-game-menu">Назад</button>
     </div>
   </div>
 
   <!-- Домашнее задание -->
-  <div id="homework" class="screen hidden">
+  <div id="homework-screen" class="screen hidden">
     <h2>Домашнее задание</h2>
     <p id="homework-text">Загрузка...</p>
     <div class="menu-buttons">
-      <button onclick="completeHomework()">Выполнено</button>
-      <button onclick="remindLater()">Напомнить позже</button>
-    </div>
-    <div id="homework-success" class="modal hidden">
-      <div class="modal-content">
-        <h2>Ты большой молодец!</h2>
-        <p>Проверим твои знания на детском занятии!</p>
-        <div class="fireworks"></div>
-        <button onclick="closeModal('homework-success')">Закрыть</button>
-      </div>
+      <button id="homework-done-btn">Выполнено</button>
+      <label for="remind-time">Напомнить через:</label>
+      <select id="remind-time">
+        <option value="3600000">1 час</option>
+        <option value="7200000">2 часа</option>
+        <option value="10800000">3 часа</option>
+      </select>
+      <button id="remind-later-btn">Напомнить позже</button>
     </div>
   </div>
 
   <!-- Скрипты -->
-  <script src="riddles.js"></script>
-  <script src="puzzle-images.js"></script>
-  <script src="homework.js"></script>
-  <script src="script.js"></script>
+  <script type="module" src="script.js"></script>
 </body>
 </html>
