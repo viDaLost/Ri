@@ -1,164 +1,198 @@
-body {
+/* === ОБЩИЕ СТИЛИ === */
+body, html {
   margin: 0;
-  font-family: 'Comic Sans MS', cursive, sans-serif;
-  background: linear-gradient(to bottom, #f9f5dc, #ffe9a7);
+  padding: 0;
+  font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', cursive, sans-serif;
+  background-color: #f0f8ff;
+  overflow-x: hidden;
+  height: 100%;
+}
+
+.page {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  transition: opacity 0.5s ease;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.page.active {
+  display: block;
+  opacity: 1;
+  pointer-events: all;
+  position: relative;
+}
+
+/* === ФОН ГЛАВНОГО МЕНЮ === */
+.page.main-menu {
+  background-image: url('img/background-room.png');
+  background-size: cover;
+  background-position: center;
+}
+
+/* === КНОПКИ === */
+button {
+  font-size: 1.2em;
+  padding: 12px 24px;
+  margin: 10px;
+  border: none;
+  border-radius: 16px;
+  background-color: #ffcc66;
+  color: #333;
+  box-shadow: 0 4px 0 #cc9900;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+button:active {
+  transform: scale(0.97);
+  box-shadow: 0 2px 0 #cc9900;
+}
+
+/* === МОДАЛЬНЫЕ ОКНА === */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.4);
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  color: #333;
+  z-index: 1000;
 }
 
-.screen {
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
+.modal-content {
+  background: #fff8dc;
+  padding: 30px;
+  border-radius: 24px;
   text-align: center;
+  max-width: 90%;
+  box-shadow: 0 0 10px #333;
+  animation: zoomIn 0.4s ease;
 }
 
-.screen.visible, .modal.visible {
-  display: flex;
+@keyframes zoomIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* === ПОЛЯ ВВОДА === */
+input[type="text"], input[type="date"] {
+  padding: 12px;
+  margin: 10px 0;
+  border: 2px solid #ccc;
+  border-radius: 12px;
+  width: 80%;
+  font-size: 1em;
+  background-color: #fff;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* === АНИМАЦИЯ ПЕРЕХОДОВ === */
+.fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .hidden {
   display: none !important;
 }
 
-h2 {
-  color: #884400;
-  margin-bottom: 10px;
-}
-
-button {
-  background: #ffcc66;
-  border: none;
-  border-radius: 12px;
-  padding: 10px 20px;
-  margin: 10px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-button:hover {
-  background: #ffb84d;
-}
-
-button:disabled {
-  background: #ddd;
-  cursor: not-allowed;
-}
-
-.menu-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.menu-buttons.small button {
-  padding: 8px 14px;
-  margin: 5px;
-  font-size: 14px;
-}
-
-input[type="text"],
-input[type="date"] {
-  padding: 8px;
-  border-radius: 8px;
-  border: 2px solid #ffcc66;
-  margin: 10px 0;
-  width: 200px;
-  font-size: 16px;
-}
-
-.modal {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.4);
-  justify-content: center;
-  align-items: center;
-  z-index: 10;
-  display: none;
-}
-
-.modal-content {
-  background: #fff8dc;
-  border-radius: 20px;
-  padding: 30px;
-  text-align: center;
-  width: 90%;
-  max-width: 400px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.3);
-}
-
-img {
+/* === ИЗОБРАЖЕНИЯ ЕНОТА === */
+.raccoon-img {
   max-width: 80%;
-  margin: 10px 0;
-}
-
-.bubble {
-  background: #fff3bd;
-  border: 2px dashed #ffcc66;
-  padding: 15px;
-  border-radius: 20px;
-  font-size: 18px;
-  margin-top: 15px;
-}
-
-#pair-board {
-  display: grid;
-  grid-template-columns: repeat(4, 70px);
-  gap: 10px;
+  height: auto;
   margin: 20px auto;
+  display: block;
 }
 
-.pair-card {
-  width: 70px;
-  height: 70px;
-  background: #fff;
-  border: 2px solid #ffcc66;
-  border-radius: 10px;
-  font-size: 24px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-}
-
-.pair-card.flipped {
-  background: #ffefb7;
-}
-
-#puzzle-board {
-  width: 300px;
-  height: 300px;
-  background: #eee;
-  border: 2px solid #aaa;
-  margin-bottom: 15px;
-  display: flex;
-  flex-wrap: wrap;
-}
-
-#puzzle-pieces {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+/* === СЕТКА ДЛЯ НАЙДИ ПАРУ === */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
   gap: 10px;
+  max-width: 90%;
+  margin: 0 auto;
 }
 
-#puzzle-pieces img {
-  width: 60px;
-  height: 60px;
-  border: 1px solid #aaa;
-  border-radius: 5px;
+.card {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background-color: #f9e0ae;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2em;
+  cursor: pointer;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
+}
+
+.card.flipped {
+  transform: rotateY(180deg);
+}
+
+/* === ПАЗЛ === */
+.puzzle-area {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.puzzle-slot {
+  width: 80px;
+  height: 80px;
+  background-color: #eee;
+  border: 2px dashed #aaa;
+  border-radius: 8px;
+}
+
+.puzzle-piece {
+  width: 80px;
+  height: 80px;
   cursor: grab;
 }
 
-.fireworks {
-  height: 80px;
-  background: url('https://media.giphy.com/media/3o7aCTfyhYawdOXcFW/giphy.gif') center no-repeat;
-  background-size: contain;
-  margin-top: 20px;
+/* === ФЕЙЕРВЕРК === */
+.firework {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: red;
+  animation: explode 1s ease forwards;
+}
+
+@keyframes explode {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(50);
+    opacity: 0;
+  }
 }
