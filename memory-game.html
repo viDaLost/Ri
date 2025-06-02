@@ -23,12 +23,125 @@
                 </div>
                 <div class="screen-buttons">
                     <button class="blue-btn" onclick="window.location.href='main-menu.html'">Главное меню</button>
-                    <button class="blue-btn" onclick="window.location.href='choose-game.html'">К выбору игры</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="app.js"></script>
+    <script>
+        let cards = [];
+        let firstCard = null;
+        let secondCard = null;
+        let lockBoard = false;
+        let matchedCount = 0;
+        
+        function initMemoryGame() {
+            const memoryGrid = document.getElementById('memoryGrid');
+            const winMessage = document.getElementById('winMessage');
+            
+            function startMemoryGame() {
+                memoryGrid.innerHTML = '';
+                cards = [];
+                firstCard = null;
+                secondCard = null;
+                lockBoard = false;
+                matchedCount = 0;
+                
+                const pairs = [];
+                for (let i = 1; i <= 8; i++) {
+                    pairs.push(i, i);
+                }
+                
+                shuffle(pairs);
+                
+                pairs.forEach((pairId, index) => {
+                    const card = document.createElement('div');
+                    card.classList.add('memory-card');
+                    card.dataset.pairId = pairId;
+                    
+                    const front = document.createElement('div');
+                    front.classList.add('memory-card-front');
+                    front.textContent = '❓';
+                    
+                    const back = document.createElement('div');
+                    back.classList.add('memory-card-back');
+                    
+                    const img = document.createElement('img');
+                    img.src = `img/puzzle-pieces/piece${pairId}.png`;
+                    img.alt = `Пазл ${pairId}`;
+                    
+                    back.appendChild(img);
+                    card.appendChild(front);
+                    card.appendChild(back);
+                    card.addEventListener('click', flipCard);
+                    memoryGrid.appendChild(card);
+                    cards.push(card);
+                });
+            }
+            
+            function flipCard() {
+                if (lockBoard || this.classList.contains('flipped') || this.classList.contains('matched')) return;
+                
+                this.classList.add('flipped');
+                
+                if (!firstCard) {
+                    firstCard = this;
+                    return;
+                }
+                
+                secondCard = this;
+                lockBoard = true;
+                
+                checkForMatch();
+            }
+            
+            function checkForMatch() {
+                const isMatch = firstCard.dataset.pairId === secondCard.dataset.pairId;
+                
+                if (isMatch) {
+                    firstCard.classList.add('matched');
+                    secondCard.classList.add('matched');
+                    matchedCount += 2;
+                    resetTurn();
+                    
+                    if (matchedCount === cards.length) {
+                        winMessage.classList.remove('hidden');
+                        setTimeout(() => {
+                            window.location.href = 'choose-game.html';
+                        }, 3000);
+                    }
+                } else {
+                    setTimeout(() => {
+                        firstCard.classList.remove('flipped');
+                        secondCard.classList.remove('flipped');
+                        resetTurn();
+                    }, 1000);
+                }
+            }
+            
+            function resetTurn() {
+                [firstCard, secondCard] = [null, null];
+                lockBoard = false;
+            }
+            
+            function shuffle(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+            }
+            
+            startMemoryGame();
+        }
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            await window.loadContent();
+            window.loadUserData();
+            
+            if (document.querySelector('.memory-game-page')) {
+                initMemoryGame();
+            }
+        });
+    </script>
 </body>
 </html>
