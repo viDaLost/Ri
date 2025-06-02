@@ -78,9 +78,12 @@ document.getElementById('confirm-btn').onclick = () => {
 
 // === ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ ===
 function showScreen(id) {
+  // Убираем класс 'hidden' и 'visible' у всех экранов
   for (let key in screens) {
     screens[key].classList.remove('visible');
+    screens[key].classList.remove('hidden');
   }
+  // Показываем нужный экран
   screens[id].classList.add('visible');
 }
 
