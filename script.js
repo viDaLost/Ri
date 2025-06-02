@@ -41,8 +41,6 @@ let intervalId = null;
 // Init
 window.onload = () => {
   const user = JSON.parse(localStorage.getItem('rikkie_user'));
-  const blockTime = parseInt(localStorage.getItem('block_until') || '0', 10);
-  const now = Date.now();
 
   if (!user) {
     showModal('confirm');
@@ -51,13 +49,7 @@ window.onload = () => {
 
   greetName.textContent = user.name;
   gameName.textContent = user.name;
-
-  if (blockTime && now < blockTime) {
-    showScreen('block');
-    setTimeout(() => showScreen('menu'), blockTime - now);
-  } else {
-    showScreen('menu');
-  }
+  showScreen('menu');
 };
 
 document.getElementById('confirm-btn').onclick = () => {
@@ -68,15 +60,7 @@ document.getElementById('confirm-btn').onclick = () => {
     greetName.textContent = name;
     gameName.textContent = name;
     closeModal('confirm');
-
-    const blockTime = parseInt(localStorage.getItem('block_until') || '0', 10);
-    const now = Date.now();
-    if (blockTime && now < blockTime) {
-      showScreen('block');
-      setTimeout(() => showScreen('menu'), blockTime - now);
-    } else {
-      showScreen('menu');
-    }
+    showScreen('menu');
   }
 };
 
@@ -275,8 +259,9 @@ document.getElementById('puzzle-btn').onclick = () => startPuzzle();
 playButton.onclick = () => {
   const blockTime = parseInt(localStorage.getItem('block_until') || '0', 10);
   const now = Date.now();
+
   if (blockTime && now < blockTime) {
-    alert('Рикки устал, зайди позже!');
+    showModal('message'); // Модальное окно с сообщением
     return;
   }
 
