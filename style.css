@@ -1,191 +1,396 @@
-/* === ОБЩИЕ СТИЛИ === */
-body, html {
-  margin: 0;
-  padding: 0;
-  font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', cursive, sans-serif;
-  background-color: #f0f8ff;
-  overflow-x: hidden;
-  height: 100%;
+/* Основные стили */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Comic Sans MS', 'Quicksand', 'Segoe UI', cursive, sans-serif;
+    background-color: #ffe6f0;
+    color: #333;
+    overflow: hidden;
 }
 
-/* === ЭКРАНЫ === */
-.page {
-  display: none;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  padding: 20px;
-  box-sizing: border-box;
-  transition: opacity 0.5s ease;
-  opacity: 0;
-  pointer-events: none;
-}
-.page.active {
-  display: block;
-  opacity: 1;
-  pointer-events: all;
-  position: relative;
+.app {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
-/* === ФОН ГЛАВНОГО МЕНЮ === */
-.page.main-menu {
-  background-image: url('img/background-room.png');
-  background-size: cover;
-  background-position: center;
+/* Фоновые изображения */
+.backgrounds {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    opacity: 0.1;
 }
 
-/* === КНОПКИ === */
-button {
-  font-size: 1.2em;
-  padding: 12px 24px;
-  margin: 10px;
-  border: none;
-  border-radius: 16px;
-  background-color: #ffcc66;
-  color: #333;
-  box-shadow: 0 4px 0 #cc9900;
-  cursor: pointer;
-  transition: transform 0.1s ease, box-shadow 0.2s ease;
-}
-button:hover {
-  transform: scale(1.05);
-}
-button:active {
-  transform: scale(0.97);
-  box-shadow: 0 2px 0 #cc9900;
+.backgrounds img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.5s ease-in-out;
 }
 
-/* === МОДАЛЬНЫЕ ОКНА === */
+/* Модальные окна */
 .modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
-  display: none; /* Скрыто по умолчанию */
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-.modal.visible {
-  display: flex;
-}
-.modal-content {
-  background: #fff8dc;
-  padding: 30px;
-  border-radius: 24px;
-  text-align: center;
-  max-width: 90%;
-  box-shadow: 0 0 10px #333;
-  animation: zoomIn 0.4s ease;
-}
-@keyframes zoomIn {
-  from { transform: scale(0.8); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.5s ease-in-out;
+    z-index: 1000;
 }
 
-/* === ПОЛЯ ВВОДА === */
+.modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background-color: #fff;
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 90%;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    transform: scale(0.9);
+    transition: transform 0.3s ease-in-out;
+    animation: popIn 0.3s forwards;
+}
+
+@keyframes popIn {
+    to { transform: scale(1); }
+}
+
+/* Экраны */
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.screen.active {
+    display: flex;
+}
+
+.character-container {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+    margin-bottom: 20px;
+}
+
+.character {
+    width: 100%;
+    height: auto;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* Кнопки */
+button {
+    background: linear-gradient(145deg, #ff99cc, #ff66b2);
+    border: none;
+    border-radius: 25px;
+    padding: 15px 25px;
+    margin: 10px;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: white;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    animation: pulse 2s infinite;
+}
+
+button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3);
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+button.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    animation: none;
+}
+
+/* Ввод текста */
 input[type="text"],
 input[type="date"] {
-  padding: 12px;
-  margin: 10px 0;
-  border: 2px solid #ccc;
-  border-radius: 12px;
-  width: 80%;
-  font-size: 1em;
-  background-color: #fff;
-  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+    width: 100%;
+    padding: 12px;
+    margin: 15px 0;
+    border-radius: 20px;
+    border: 2px solid #ff99cc;
+    font-size: 1.1em;
+    font-family: inherit;
+    transition: all 0.3s ease;
 }
 
-/* === АНИМАЦИЯ ПЕРЕХОДОВ === */
-.fade-in {
-  animation: fadeIn 0.5s ease forwards;
+input:focus {
+    outline: none;
+    border-color: #ff66b2;
+    box-shadow: 0 0 8px rgba(255, 102, 178, 0.5);
 }
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+
+/* Плашка приветствия */
+.greeting-box {
+    background-color: #fff0f5;
+    border-radius: 25px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    font-size: 1.2em;
+    max-width: 80%;
 }
+
+.greeting-box span {
+    font-weight: bold;
+    color: #ff66b2;
+}
+
+/* Кнопки меню */
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Игровые экраны */
+.game-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.game-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.puzzle-box {
+    background-color: #fff0f5;
+    border-radius: 25px;
+    padding: 20px;
+    margin-top: 20px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    font-size: 1.1em;
+}
+
+#answerInput {
+    margin: 15px 0;
+}
+
+#answerFeedback {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.feedbackText {
+    color: #ff66b2;
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+/* Игра "Найди пару" */
+.memory-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    width: 100%;
+    max-width: 500px;
+    margin-top: 20px;
+    perspective: 1000px;
+}
+
+.memory-card {
+    width: 100px;
+    height: 100px;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.5s;
+    cursor: pointer;
+}
+
+.memory-card.flipped {
+    transform: rotateY(180deg);
+}
+
+.memory-card-front,
+.memory-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.memory-card-front {
+    background-color: #ff99cc;
+    color: white;
+    font-size: 2em;
+    border: 3px solid #ff66b2;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.memory-card-back {
+    transform: rotateY(180deg);
+    background-color: #fff;
+    border: 3px solid #ff99cc;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.memory-card.matched .memory-card-front {
+    border-color: #00cc66;
+    box-shadow: 0 0 15px rgba(0, 204, 102, 0.5);
+}
+
+#winMessage {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 1.2em;
+    color: #ff66b2;
+    font-weight: bold;
+}
+
+/* Домашнее задание */
+.homework-content {
+    background-color: #fff0f5;
+    border-radius: 25px;
+    padding: 20px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.homework-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+#reminderInput {
+    margin-top: 20px;
+}
+
+#reminderInput input {
+    margin: 10px 0;
+}
+
+/* Уведомление о перерыве */
+.break-notification .modal-content {
+    background-color: #ffe6f0;
+}
+
+.break-notification .modal-image {
+    max-width: 80%;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+/* Анимации */
 .hidden {
-  display: none !important;
+    display: none;
 }
 
-/* === ИЗОБРАЖЕНИЯ ЕНОТА === */
-.raccoon-img {
-  max-width: 80%;
-  height: auto;
-  margin: 20px auto;
-  display: block;
+.fadeIn {
+    animation: fadeIn 0.5s ease-in-out;
 }
 
-/* === СЕТКА ДЛЯ НАЙДИ ПАРУ === */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
-  max-width: 90%;
-  margin: 0 auto;
-}
-.card {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  background-color: #f9e0ae;
-  border-radius: 12px;
-  box-shadow: 0 2px 5px #999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2em;
-  cursor: pointer;
-  position: relative;
-  transform-style: preserve-3d;
-  transition: transform 0.6s;
-}
-.card.flipped {
-  transform: rotateY(180deg);
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
-/* === ПАЗЛ === */
-.puzzle-area {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-  margin-top: 20px;
-}
-.puzzle-slot {
-  width: 80px;
-  height: 80px;
-  background-color: #eee;
-  border: 2px dashed #aaa;
-  border-radius: 8px;
-}
-.puzzle-piece {
-  width: 80px;
-  height: 80px;
-  cursor: grab;
+.pulse {
+    animation: pulse 2s infinite;
 }
 
-/* === ФЕЙЕРВЕРК === */
-.firework {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: red;
-  animation: explode 1s ease forwards;
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
 }
-@keyframes explode {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(50);
+
+/* Фейерверк */
+#fireworks {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    pointer-events: none;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="url(#grad)"/><defs><radialGradient id="grad"><stop offset="0%" stop-color="yellow"/><stop offset="100%" stop-color="red"/></radialGradient></defs></svg>') no-repeat center center fixed;
+    background-size: cover;
     opacity: 0;
-  }
+    transition: opacity 1s ease-in-out;
+}
+
+#fireworks.active {
+    opacity: 1;
+}
+
+/* Адаптивность */
+@media (max-width: 600px) {
+    .menu-buttons,
+    .homework-buttons {
+        flex-direction: column;
+    }
+    
+    .character-container {
+        max-width: 200px;
+    }
+    
+    button {
+        font-size: 1em;
+    }
+    
+    .greeting-box {
+        font-size: 1em;
+    }
+    
+    .puzzle-box {
+        font-size: 1em;
+    }
 }
