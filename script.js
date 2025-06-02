@@ -35,7 +35,6 @@ const playButton = document.getElementById('play-button');
 let currentRiddle = 0;
 let matchedCards = [];
 let flippedCards = [];
-
 let sessionStart = null;
 
 // Init
@@ -44,19 +43,20 @@ window.onload = () => {
   const blockTime = parseInt(localStorage.getItem('block_until') || '0', 10);
   const now = Date.now();
 
-  if (blockTime && now < blockTime) {
-    showScreen('block');
-    setTimeout(() => showScreen('menu'), blockTime - now);
+  if (!user) {
+    showModal('confirm');
     return;
   }
 
-  if (!user) {
-    showModal('confirm');
+  greetName.textContent = user.name;
+  gameName.textContent = user.name;
+
+  if (blockTime && now < blockTime) {
+    showScreen('block');
+    setTimeout(() => showScreen('menu'), blockTime - now);
   } else {
-    greetName.textContent = user.name;
-    gameName.textContent = user.name;
     showScreen('menu');
-    sessionStart = Date.now();
+    sessionStart = now;
     setInterval(checkSessionTime, 1000);
   }
 };
@@ -69,8 +69,17 @@ document.getElementById('confirm-btn').onclick = () => {
     greetName.textContent = name;
     gameName.textContent = name;
     closeModal('confirm');
-    showScreen('menu');
-    sessionStart = Date.now();
+
+    const blockTime = parseInt(localStorage.getItem('block_until') || '0', 10);
+    const now = Date.now();
+    if (blockTime && now < blockTime) {
+      showScreen('block');
+      setTimeout(() => showScreen('menu'), blockTime - now);
+    } else {
+      showScreen('menu');
+      sessionStart = now;
+      setInterval(checkSessionTime, 1000);
+    }
   }
 };
 
@@ -124,6 +133,7 @@ document.getElementById('next-riddle').onclick = () => {
   document.getElementById('riddle-result').textContent = '';
   document.getElementById('riddle-win').style.display = 'none';
 };
+
 // 🧩 Puzzle
 function startPuzzle() {
   puzzleBoard.innerHTML = '';
