@@ -34,6 +34,7 @@ function initApp() {
     const memoryGame = document.querySelector('.memory-game');
     const homework = document.querySelector('.homework');
     const breakNotification = document.querySelector('.break-notification');
+    const homeworkCompleteModal = document.querySelector('.homework-complete');
     
     const usernameInput = document.getElementById('username');
     const birthdateInput = document.getElementById('birthdate');
@@ -72,12 +73,19 @@ function initApp() {
     // Уведомление о перерыве
     const backToMenuFromBreakBtn = document.getElementById('backToMenuFromBreakBtn');
     
-    // Фейерверк
-    const fireworks = document.getElementById('fireworks');
+    // Дополнительные кнопки
+    const puzzleMenuBtn = document.getElementById('puzzleMenuBtn');
+    const puzzleChooseBtn = document.getElementById('puzzleChooseBtn');
+    const memoryMenuBtn = document.getElementById('memoryMenuBtn');
+    const memoryChooseBtn = document.getElementById('memoryChooseBtn');
+    const homeworkMenuBtn = document.getElementById('homeworkMenuBtn');
+    const homeworkChooseBtn = document.getElementById('homeworkChooseBtn');
+    const closeHomeworkModalBtn = document.getElementById('closeHomeworkModalBtn');
     
     // Проверка первого запуска
     const userData = JSON.parse(localStorage.getItem('rikkieUserData'));
     if (!userData) {
+        // Показываем только если нет данных
         welcomeModal.classList.add('active');
     } else {
         showMainMenu(userData.name);
@@ -140,6 +148,37 @@ function initApp() {
         chooseGame.classList.remove('active');
         memoryGame.classList.add('active');
         startMemoryGame();
+    });
+    
+    // Добавленные кнопки
+    puzzleMenuBtn.addEventListener('click', () => {
+        biblePuzzles.classList.remove('active');
+        mainMenu.classList.add('active');
+    });
+    
+    puzzleChooseBtn.addEventListener('click', () => {
+        biblePuzzles.classList.remove('active');
+        chooseGame.classList.add('active');
+    });
+    
+    memoryMenuBtn.addEventListener('click', () => {
+        memoryGame.classList.remove('active');
+        mainMenu.classList.add('active');
+    });
+    
+    memoryChooseBtn.addEventListener('click', () => {
+        memoryGame.classList.remove('active');
+        chooseGame.classList.add('active');
+    });
+    
+    homeworkMenuBtn.addEventListener('click', () => {
+        homework.classList.remove('active');
+        mainMenu.classList.add('active');
+    });
+    
+    homeworkChooseBtn.addEventListener('click', () => {
+        homework.classList.remove('active');
+        chooseGame.classList.add('active');
     });
     
     // Игра "Библейские загадки"
@@ -311,20 +350,13 @@ function initApp() {
     });
     
     doneBtn.addEventListener('click', () => {
-        fireworks.classList.add('active');
-        fireworks.classList.remove('hidden');
-        
-        setTimeout(() => {
-            fireworks.classList.remove('active');
-            setTimeout(() => {
-                fireworks.classList.add('hidden');
-                homework.classList.remove('active');
-                mainMenu.classList.add('active');
-            }, 1000);
-        }, 3000);
-        
-        // Удаление напоминания, если оно было установлено
-        localStorage.removeItem('rikkieHomeworkReminder');
+        homework.classList.remove('active');
+        homeworkCompleteModal.classList.add('active');
+    });
+    
+    closeHomeworkModalBtn.addEventListener('click', () => {
+        homeworkCompleteModal.classList.remove('active');
+        mainMenu.classList.add('active');
     });
     
     // Проверка напоминаний при загрузке
