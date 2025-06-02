@@ -28,12 +28,72 @@
                 </div>
                 <div class="screen-buttons">
                     <button class="blue-btn" onclick="window.location.href='main-menu.html'">Главное меню</button>
-                    <button class="green-btn" onclick="window.location.href='choose-game.html'">К выбору игры</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="app.js"></script>
+    <script>
+        let currentPuzzleIndex = 0;
+        let currentPuzzleAnswer = "";
+        
+        function initBiblePuzzles() {
+            const currentPuzzle = document.getElementById('currentPuzzle');
+            const answerInput = document.getElementById('answerInput');
+            const checkAnswerBtn = document.getElementById('checkAnswerBtn');
+            const answerFeedback = document.getElementById('answerFeedback');
+            const feedbackText = document.getElementById('feedbackText');
+            const nextPuzzleBtn = document.getElementById('nextPuzzleBtn');
+            
+            function startPuzzleGame() {
+                if (currentPuzzleIndex >= window.contentData.puzzles.length) {
+                    currentPuzzleIndex = 0;
+                }
+                
+                const puzzle = window.contentData.puzzles[currentPuzzleIndex];
+                currentPuzzle.textContent = puzzle.question;
+                currentPuzzleAnswer = puzzle.answer.toLowerCase();
+                answerInput.value = '';
+                answerFeedback.classList.add('hidden');
+            }
+            
+            startPuzzleGame();
+            
+            checkAnswerBtn.addEventListener('click', () => {
+                const userAnswer = answerInput.value.trim().toLowerCase();
+                
+                if (userAnswer === currentPuzzleAnswer) {
+                    feedbackText.textContent = "Молодец!";
+                    answerFeedback.classList.remove('hidden');
+                } else {
+                    feedbackText.textContent = "Попробуй еще раз!";
+                    answerFeedback.classList.remove('hidden');
+                }
+            });
+            
+            nextPuzzleBtn.addEventListener('click', () => {
+                currentPuzzleIndex++;
+                if (currentPuzzleIndex < window.contentData.puzzles.length) {
+                    startPuzzleGame();
+                } else {
+                    currentPuzzle.textContent = "Вы прошли все загадки! Молодец!";
+                    answerFeedback.classList.add('hidden');
+                    nextPuzzleBtn.textContent = "Вернуться к выбору игры";
+                    nextPuzzleBtn.onclick = () => {
+                        window.location.href = 'choose-game.html';
+                    };
+                }
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            await window.loadContent();
+            window.loadUserData();
+            
+            if (document.querySelector('.bible-puzzles-page')) {
+                initBiblePuzzles();
+            }
+        });
+    </script>
 </body>
 </html>
