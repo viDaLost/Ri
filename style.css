@@ -7,7 +7,6 @@ body, html {
   overflow-x: hidden;
   height: 100%;
 }
-
 .page {
   display: none;
   position: absolute;
@@ -21,7 +20,6 @@ body, html {
   opacity: 0;
   pointer-events: none;
 }
-
 .page.active {
   display: block;
   opacity: 1;
@@ -49,11 +47,9 @@ button {
   cursor: pointer;
   transition: transform 0.1s ease, box-shadow 0.2s ease;
 }
-
 button:hover {
   transform: scale(1.05);
 }
-
 button:active {
   transform: scale(0.97);
   box-shadow: 0 2px 0 #cc9900;
@@ -66,11 +62,15 @@ button:active {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,0.4);
-  display: flex;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: none; /* Скрыто по умолчанию */
   justify-content: center;
   align-items: center;
   z-index: 1000;
+}
+
+.modal.visible {
+  display: flex;
 }
 
 .modal-content {
@@ -89,7 +89,8 @@ button:active {
 }
 
 /* === ПОЛЯ ВВОДА === */
-input[type="text"], input[type="date"] {
+input[type="text"],
+input[type="date"] {
   padding: 12px;
   margin: 10px 0;
   border: 2px solid #ccc;
@@ -104,12 +105,10 @@ input[type="text"], input[type="date"] {
 .fade-in {
   animation: fadeIn 0.5s ease forwards;
 }
-
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
-
 .hidden {
   display: none !important;
 }
@@ -130,7 +129,6 @@ input[type="text"], input[type="date"] {
   max-width: 90%;
   margin: 0 auto;
 }
-
 .card {
   width: 100%;
   aspect-ratio: 1 / 1;
@@ -146,7 +144,6 @@ input[type="text"], input[type="date"] {
   transform-style: preserve-3d;
   transition: transform 0.6s;
 }
-
 .card.flipped {
   transform: rotateY(180deg);
 }
@@ -159,7 +156,6 @@ input[type="text"], input[type="date"] {
   justify-content: center;
   margin-top: 20px;
 }
-
 .puzzle-slot {
   width: 80px;
   height: 80px;
@@ -167,7 +163,6 @@ input[type="text"], input[type="date"] {
   border: 2px dashed #aaa;
   border-radius: 8px;
 }
-
 .puzzle-piece {
   width: 80px;
   height: 80px;
@@ -185,7 +180,6 @@ input[type="text"], input[type="date"] {
   background: red;
   animation: explode 1s ease forwards;
 }
-
 @keyframes explode {
   0% {
     transform: scale(1);
