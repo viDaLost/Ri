@@ -9,7 +9,7 @@
 <body>
 
   <!-- Модальное окно: Регистрация -->
-  <div id="confirm-modal" class="modal">
+  <div id="confirm-modal" class="modal" style="display: none;">
     <div class="modal-content">
       <span class="close-modal">&times;</span>
       <h2>Привет!</h2>
@@ -21,39 +21,34 @@
   </div>
 
   <!-- Модальное окно: Сообщение о блокировке -->
-  <div id="message-modal" class="modal">
+  <div id="message-modal" class="modal" style="display: none;">
     <div class="modal-content">
       <span class="close-modal">&times;</span>
       <img src="img/tired.png" alt="Усталый Рикки" style="max-width: 100px; margin-bottom: 10px;">
       <h2>Рикки устал</h2>
       <p>Вернись позже, и мы ещё поиграем!</p>
-      <button onclick="document.getElementById('message-modal').classList.remove('visible')">ОК</button>
+      <button onclick="document.getElementById('message-modal').style.display = 'none'">ОК</button>
     </div>
   </div>
 
   <!-- Модальное окно: Выполнение домашнего задания -->
-  <div id="homework-done-modal" class="modal">
+  <div id="homework-done-modal" class="modal" style="display: none;">
     <div class="modal-content">
       <h2>Ты большой молодец!</h2>
       <p>Проверим твои знания на детском занятии!</p>
       <div class="fireworks" id="fireworks"></div>
-      <button onclick="document.getElementById('homework-done-modal').classList.remove('visible')">Закрыть</button>
+      <button onclick="document.getElementById('homework-done-modal').style.display = 'none'">Закрыть</button>
     </div>
   </div>
 
   <!-- Приветствие -->
-  <div id="welcome-screen" class="screen hidden"></div>
+  <div id="welcome-screen" class="page hidden"></div>
 
   <!-- Экран блокировки -->
-  <div id="block-screen" class="screen hidden">
-    <img src="img/tired.png" alt="Усталый Рикки" />
-    <h2>Рикки устал</h2>
-    <p>Вернись позже, и мы ещё поиграем!</p>
-    <button id="to-menu">Главное меню</button>
-  </div>
+  <div id="block-screen" class="page"></div>
 
   <!-- Главное меню -->
-  <div id="menu-screen" class="screen hidden">
+  <div id="menu-screen" class="page">
     <img src="img/main.png" alt="Рикки" />
     <p class="bubble">Привет, <span id="greet-name">друг</span>! Я твой знакомый енот Рикки. Давай дружить!</p>
     <button id="play-button">Играть</button>
@@ -61,7 +56,7 @@
   </div>
 
   <!-- Меню игр -->
-  <div id="game-menu" class="screen hidden">
+  <div id="game-menu" class="page">
     <img src="img/choose.png" alt="Задумчивый Рикки" />
     <h2>Выбери игру</h2>
     <div class="menu-buttons">
@@ -73,7 +68,7 @@
   </div>
 
   <!-- Библейские загадки -->
-  <div id="riddle-screen" class="screen hidden">
+  <div id="riddle-screen" class="page">
     <h2>Библейские загадки</h2>
     <p id="riddle-text"></p>
     <input type="text" id="riddle-input" placeholder="Твой ответ"/>
@@ -88,7 +83,7 @@
   </div>
 
   <!-- Найди пару -->
-  <div id="pair-screen" class="screen hidden">
+  <div id="pair-screen" class="page">
     <h2>Найди пару</h2>
     <div id="pair-board"></div>
     <div id="pair-win" style="display:none;">
@@ -99,7 +94,7 @@
   </div>
 
   <!-- Пазл -->
-  <div id="puzzle-screen" class="screen hidden">
+  <div id="puzzle-screen" class="page">
     <h2>Помоги собрать</h2>
     <div id="puzzle-board"></div>
     <div id="puzzle-pieces"></div>
@@ -111,7 +106,7 @@
   </div>
 
   <!-- Домашнее задание -->
-  <div id="homework-screen" class="screen hidden">
+  <div id="homework-screen" class="page">
     <h2>Домашнее задание</h2>
     <p id="homework-text">Загрузка...</p>
     <div class="menu-buttons">
