@@ -2,6 +2,7 @@ import { riddles } from './riddles.js';
 import { puzzlePieces } from './puzzle-images.js';
 import { homeworkText } from './homework.js';
 
+// === ЭКРАНЫ ===
 const screens = {
   welcome: document.getElementById('welcome-screen'),
   menu: document.getElementById('menu-screen'),
@@ -13,12 +14,14 @@ const screens = {
   block: document.getElementById('block-screen'),
 };
 
+// === МОДАЛЬНЫЕ ОКНА ===
 const modals = {
   confirm: document.getElementById('confirm-modal'),
   message: document.getElementById('message-modal'),
   homeworkDone: document.getElementById('homework-done-modal'),
 };
 
+// === ОСНОВНЫЕ ЭЛЕМЕНТЫ ===
 const nameEl = document.getElementById('name');
 const birthEl = document.getElementById('birth');
 const greetName = document.getElementById('greet-name');
@@ -32,26 +35,35 @@ const remindTime = document.getElementById('remind-time');
 const pairBoard = document.getElementById('pair-board');
 const playButton = document.getElementById('play-button');
 
+// === СТАТУС ИГРЫ ===
 let currentRiddle = 0;
 let matchedCards = [];
 let flippedCards = [];
 let sessionStart = null;
 let intervalId = null;
 
-// Init
+// === ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ ===
 window.onload = () => {
   const user = JSON.parse(localStorage.getItem('rikkie_user'));
 
+  // Скрываем все модальные окна при запуске
+  Object.keys(modals).forEach(key => {
+    modals[key].classList.remove('visible');
+  });
+
+  // Если пользователь не зарегистрирован — показываем только confirm-modal
   if (!user) {
     showModal('confirm');
     return;
   }
 
+  // Иначе загружаем данные пользователя и показываем меню
   greetName.textContent = user.name;
   gameName.textContent = user.name;
   showScreen('menu');
 };
 
+// === КНОПКА РЕГИСТРАЦИИ ===
 document.getElementById('confirm-btn').onclick = () => {
   const name = nameEl.value.trim();
   const birth = birthEl.value;
@@ -64,6 +76,7 @@ document.getElementById('confirm-btn').onclick = () => {
   }
 };
 
+// === ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ ===
 function showScreen(id) {
   for (let key in screens) {
     screens[key].classList.remove('visible');
@@ -71,7 +84,12 @@ function showScreen(id) {
   screens[id].classList.add('visible');
 }
 
+// === УПРАВЛЕНИЕ МОДАЛЬНЫМИ ОКНАМИ ===
 function showModal(id) {
+  // Скрываем все модальные окна перед открытием нового
+  Object.keys(modals).forEach(key => {
+    modals[key].classList.remove('visible');
+  });
   modals[id].classList.add('visible');
 }
 
@@ -79,6 +97,7 @@ function closeModal(id) {
   modals[id].classList.remove('visible');
 }
 
+// === ПРОВЕРКА ВРЕМЕНИ СЕАНСА ===
 function checkSessionTime() {
   const now = Date.now();
   const diff = now - sessionStart;
@@ -90,7 +109,7 @@ function checkSessionTime() {
   }
 }
 
-// 📘 Riddles
+// === БИБЛЕЙСКИЕ ЗАГАДКИ ===
 function showRiddle(index) {
   currentRiddle = index;
   riddleText.textContent = riddles[index].question;
@@ -116,7 +135,7 @@ document.getElementById('next-riddle').onclick = () => {
   document.getElementById('riddle-win').style.display = 'none';
 };
 
-// 🧩 Puzzle
+// === ПАЗЛ ===
 function startPuzzle() {
   puzzleBoard.innerHTML = '';
   puzzlePiecesContainer.innerHTML = '';
@@ -160,12 +179,13 @@ function dropPiece(e) {
   const completed = [...puzzleBoard.children].every(
     slot => slot.children.length === 1
   );
+
   if (completed) {
     document.getElementById('puzzle-win').style.display = 'block';
   }
 }
 
-// 🧠 Find Pair
+// === НАЙДИ ПАРУ ===
 function startPair() {
   matchedCards = [];
   flippedCards = [];
@@ -216,7 +236,7 @@ function flipCard(card) {
   }
 }
 
-// 📒 Homework
+// === ДОМАШНЕЕ ЗАДАНИЕ ===
 function showHomework() {
   homeworkTextEl.textContent = homeworkText;
   showScreen('homework');
@@ -235,14 +255,14 @@ document.getElementById('remind-later-btn').onclick = () => {
   }
 };
 
-// Закрытие модалок
+// === ЗАКРЫТИЕ МОДАЛЬНЫХ ОКОН ===
 document.querySelectorAll('.close-modal').forEach(btn =>
   btn.addEventListener('click', () => {
     btn.closest('.modal').classList.remove('visible');
   })
 );
 
-// Навигация
+// === НАВИГАЦИЯ ===
 document.getElementById('to-game-menu').onclick = () => showScreen('gameMenu');
 document.getElementById('to-menu').onclick = () => {
   showScreen('menu');
@@ -256,12 +276,13 @@ document.getElementById('riddle-btn').onclick = () => showRiddle(0);
 document.getElementById('pair-btn').onclick = () => startPair();
 document.getElementById('puzzle-btn').onclick = () => startPuzzle();
 
+// === КНОПКА ИГРАТЬ ===
 playButton.onclick = () => {
   const blockTime = parseInt(localStorage.getItem('block_until') || '0', 10);
   const now = Date.now();
 
   if (blockTime && now < blockTime) {
-    showModal('message'); // Модальное окно с сообщением
+    showModal('message'); // Показывается только по условию
     return;
   }
 
