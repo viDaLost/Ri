@@ -2,70 +2,117 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Рикки — детское приложение</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Рикки - Детское приложение</title>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-  <!-- Модальные окна -->
-  <div id="welcome-modal" class="modal hidden">
+
+  <!-- Приветствие -->
+  <div id="welcome-modal" class="modal visible">
     <div class="modal-content">
       <h2>Привет!</h2>
       <p>Рикки хочет знать, когда у тебя день рождения и как тебя зовут!</p>
-      <input type="text" id="username" placeholder="Имя" />
-      <input type="date" id="birthdate" />
+      <input type="text" id="username" placeholder="Твоё имя"/>
+      <input type="date" id="birthdate"/>
       <button onclick="confirmUserData()">Подтвердить</button>
     </div>
   </div>
 
-  <div id="lock-screen" class="modal hidden">
-    <div class="modal-content center-text">
-      <img src="img/tired.png" alt="Рикки устал" class="rick-image" />
-      <h2>Рикки устал, ему нужно отдохнуть.</h2>
+  <!-- Экран блокировки -->
+  <div id="lock-screen" class="modal">
+    <div class="modal-content">
+      <img src="img/tired.png" alt="Усталый Рикки" />
+      <h2>Рикки устал</h2>
       <p>Вернись позже, и мы ещё поиграем!</p>
       <button onclick="goToMainMenu()">Главное меню</button>
     </div>
   </div>
 
-  <!-- Экраны -->
+  <!-- Главное меню -->
   <div id="main-menu" class="screen hidden">
-    <img src="img/main.png" alt="Рикки" class="rick-image" />
-    <div class="caption">Привет, <span id="name-display"></span>! Я твой знакомый енот Рикки. Давай дружить!</div>
-    <div class="button-container">
+    <img src="img/main.png" alt="Рикки" />
+    <p class="bubble">Привет, <span id="name-display">друг</span>! Я твой знакомый енот Рикки. Давай дружить!</p>
+    <div class="menu-buttons">
       <button onclick="goToGameMenu()">Играть</button>
       <button onclick="goToHomework()">Домашнее задание</button>
     </div>
   </div>
 
+  <!-- Меню игр -->
   <div id="game-menu" class="screen hidden">
+    <img src="img/choose.png" alt="Задумчивый Рикки" />
     <h2>Выбери игру</h2>
-    <img src="img/choose.png" alt="Рикки думает" class="rick-image" />
-    <div class="button-container">
+    <div class="menu-buttons">
       <button onclick="startBibleGame()">Библейские загадки</button>
       <button onclick="startPairGame()">Найди пару</button>
       <button onclick="startPuzzleGame()">Помоги собрать</button>
     </div>
-    <div class="button-container">
+    <div class="menu-buttons small">
       <button onclick="goToMainMenu()">Главное меню</button>
       <button disabled>К выбору игры</button>
     </div>
   </div>
 
+  <!-- Библейские загадки -->
   <div id="bible-game" class="screen hidden">
     <h2>Библейские загадки</h2>
     <p id="riddle-text"></p>
-    <input type="text" id="riddle-answer" placeholder="Твой ответ..." />
+    <input type="text" id="riddle-answer" placeholder="Твой ответ"/>
     <button onclick="checkRiddleAnswer()">Ответить</button>
     <div id="riddle-feedback" class="hidden">
-      <p class="success-text">Молодец!</p>
-      <img src="img/win.png" alt="Рикки радуется" class="rick-image" />
+      <img src="img/win.png" alt="Победа"/>
+      <p>Молодец!</p>
       <button onclick="nextRiddle()">Следующая загадка</button>
     </div>
     <button onclick="goToGameMenu()">Назад</button>
   </div>
 
-  <!-- Остальные экраны подключим позже: игры 2, 3, домашнее задание -->
+  <!-- Найди пару -->
+  <div id="pair-game" class="screen hidden">
+    <h2>Найди пару</h2>
+    <div id="pair-board"></div>
+    <div id="pair-win" class="hidden">
+      <img src="img/win.png" alt="Победа"/>
+      <p>Ты справился!</p>
+      <button onclick="goToGameMenu()">Назад</button>
+    </div>
+  </div>
 
+  <!-- Пазл -->
+  <div id="puzzle-game" class="screen hidden">
+    <h2>Помоги собрать</h2>
+    <div id="puzzle-board"></div>
+    <div id="puzzle-pieces"></div>
+    <div id="puzzle-win" class="hidden">
+      <img src="img/win.png" alt="Победа"/>
+      <p>Пазл собран!</p>
+      <button onclick="goToGameMenu()">Назад</button>
+    </div>
+  </div>
+
+  <!-- Домашнее задание -->
+  <div id="homework" class="screen hidden">
+    <h2>Домашнее задание</h2>
+    <p id="homework-text">Загрузка...</p>
+    <div class="menu-buttons">
+      <button onclick="completeHomework()">Выполнено</button>
+      <button onclick="remindLater()">Напомнить позже</button>
+    </div>
+    <div id="homework-success" class="modal hidden">
+      <div class="modal-content">
+        <h2>Ты большой молодец!</h2>
+        <p>Проверим твои знания на детском занятии!</p>
+        <div class="fireworks"></div>
+        <button onclick="closeModal('homework-success')">Закрыть</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Скрипты -->
+  <script src="riddles.js"></script>
+  <script src="puzzle-images.js"></script>
+  <script src="homework.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
