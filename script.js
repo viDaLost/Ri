@@ -1,134 +1,263 @@
-// Состояния и таймеры
+import { riddles } from './riddles.js';
+import { puzzlePieces } from './puzzle-images.js';
+import { homeworkText } from './homework.js';
+
 const screens = {
-  welcome: document.getElementById('welcome-modal'),
-  lock: document.getElementById('lock-screen'),
-  mainMenu: document.getElementById('main-menu'),
+  welcome: document.getElementById('welcome-screen'),
+  menu: document.getElementById('menu-screen'),
   gameMenu: document.getElementById('game-menu'),
-  bibleGame: document.getElementById('bible-game')
+  riddle: document.getElementById('riddle-screen'),
+  pair: document.getElementById('pair-screen'),
+  puzzle: document.getElementById('puzzle-screen'),
+  homework: document.getElementById('homework-screen'),
+  block: document.getElementById('block-screen'),
 };
 
-let playStartTime = null;
-const maxPlayTime = 40 * 60 * 1000; // 40 минут
-const cooldownTime = 15 * 60 * 1000; // 15 минут
+const modals = {
+  confirm: document.getElementById('confirm-modal'),
+  message: document.getElementById('message-modal'),
+  homeworkDone: document.getElementById('homework-done-modal'),
+};
 
-// Загадки
-const riddles = [
-  { question: 'Кто построил ковчег?', answer: 'ной' },
-  { question: 'Кто был первым человеком?', answer: 'адам' },
-  { question: 'Как звали жену Адама?', answer: 'ева' }
-];
-let currentRiddleIndex = 0;
+const nameEl = document.getElementById('name');
+const birthEl = document.getElementById('birth');
+const greetName = document.getElementById('greet-name');
+const gameName = document.getElementById('game-name');
+const riddleText = document.getElementById('riddle-text');
+const riddleInput = document.getElementById('riddle-input');
+const puzzleBoard = document.getElementById('puzzle-board');
+const puzzlePiecesContainer = document.getElementById('puzzle-pieces');
+const homeworkTextEl = document.getElementById('homework-text');
+const remindTime = document.getElementById('remind-time');
+const pairBoard = document.getElementById('pair-board');
+const playButton = document.getElementById('play-button');
 
-// Инициализация
+let currentRiddle = 0;
+let matchedCards = [];
+let flippedCards = [];
+
+let sessionStart = null;
+let blockUntil = null;
+
+// Init
 window.onload = () => {
-  const user = localStorage.getItem('rikkieName');
-  const cooldown = localStorage.getItem('cooldownUntil');
+  const user = JSON.parse(localStorage.getItem('rikkie_user'));
+  const blockTime = localStorage.getItem('block_until');
   const now = Date.now();
 
+  if (blockTime && now < blockTime) {
+    showScreen('block');
+    setTimeout(() => showScreen('menu'), blockTime - now);
+    return;
+  }
+
   if (!user) {
-    showScreen('welcome');
-  } else if (cooldown && now < parseInt(cooldown)) {
-    showScreen('lock');
+    showModal('confirm');
   } else {
-    startSession();
-    showScreen('mainMenu');
-    document.getElementById('name-display').textContent = user;
+    greetName.textContent = user.name;
+    gameName.textContent = user.name;
+    showScreen('menu');
+    sessionStart = Date.now();
+    setInterval(checkSessionTime, 1000);
   }
 };
 
-// Хранение данных пользователя
-function confirmUserData() {
-  const name = document.getElementById('username').value.trim();
-  const birthdate = document.getElementById('birthdate').value;
-  if (!name || !birthdate) return alert("Пожалуйста, введи имя и дату рождения!");
-  localStorage.setItem('rikkieName', name);
-  localStorage.setItem('rikkieBirthday', birthdate);
-  startSession();
-  showScreen('mainMenu');
-  document.getElementById('name-display').textContent = name;
+document.getElementById('confirm-btn').onclick = () => {
+  const name = nameEl.value.trim();
+  const birth = birthEl.value;
+  if (name && birth) {
+    localStorage.setItem('rikkie_user', JSON.stringify({ name, birth }));
+    greetName.textContent = name;
+    gameName.textContent = name;
+    closeModal('confirm');
+    showScreen('menu');
+    sessionStart = Date.now();
+  }
+};
+
+function showScreen(id) {
+  for (let key in screens) {
+    screens[key].classList.remove('visible');
+  }
+  screens[id].classList.add('visible');
 }
 
-// Показывать экран
-function showScreen(screenName) {
-  Object.values(screens).forEach(s => s.classList.add('hidden'));
-  if (screens[screenName]) {
-    screens[screenName].classList.remove('hidden');
-    if (screens[screenName].classList.contains('screen')) {
-      screens[screenName].classList.add('visible');
-    }
+function showModal(id) {
+  modals[id].classList.add('visible');
+}
+
+function closeModal(id) {
+  modals[id].classList.remove('visible');
+}
+
+function checkSessionTime() {
+  if (!sessionStart) return;
+  const now = Date.now();
+  const diff = now - sessionStart;
+  if (diff > 40 * 60 * 1000) {
+    localStorage.setItem('block_until', now + 15 * 60 * 1000);
+    showScreen('block');
   }
 }
 
-// Навигация
-function goToMainMenu() {
-  showScreen('mainMenu');
+// 📘 Riddles
+function showRiddle(index) {
+  currentRiddle = index;
+  riddleText.textContent = riddles[index].question;
+  riddleInput.value = '';
+  showScreen('riddle');
 }
 
-function goToGameMenu() {
-  if (isOnCooldown()) {
-    alert('Рикки устал, зайди позже!');
-    return;
-  }
-  showScreen('gameMenu');
-}
-
-function goToHomework() {
-  alert('Раздел "Домашнее задание" будет добавлен позже!');
-}
-
-function startBibleGame() {
-  currentRiddleIndex = 0;
-  updateRiddle();
-  showScreen('bibleGame');
-}
-
-function nextRiddle() {
-  currentRiddleIndex++;
-  if (currentRiddleIndex >= riddles.length) currentRiddleIndex = 0;
-  document.getElementById('riddle-feedback').classList.add('hidden');
-  updateRiddle();
-}
-
-function updateRiddle() {
-  document.getElementById('riddle-text').textContent = riddles[currentRiddleIndex].question;
-  document.getElementById('riddle-answer').value = '';
-}
-
-// Проверка ответа
-function checkRiddleAnswer() {
-  const input = document.getElementById('riddle-answer').value.trim().toLowerCase();
-  const correct = riddles[currentRiddleIndex].answer;
-  if (input === correct) {
-    document.getElementById('riddle-feedback').classList.remove('hidden');
+document.getElementById('riddle-submit').onclick = () => {
+  const input = riddleInput.value.trim().toLowerCase();
+  const answer = riddles[currentRiddle].answer.toLowerCase();
+  if (input === answer) {
+    document.getElementById('riddle-result').textContent = 'Молодец!';
+    document.getElementById('riddle-win').style.display = 'block';
   } else {
-    alert('Попробуй ещё!');
+    document.getElementById('riddle-result').textContent = 'Попробуй ещё!';
+  }
+};
+
+document.getElementById('next-riddle').onclick = () => {
+  currentRiddle = (currentRiddle + 1) % riddles.length;
+  showRiddle(currentRiddle);
+  document.getElementById('riddle-result').textContent = '';
+  document.getElementById('riddle-win').style.display = 'none';
+};
+
+// 🧩 Puzzle
+function startPuzzle() {
+  puzzleBoard.innerHTML = '';
+  puzzlePiecesContainer.innerHTML = '';
+  puzzlePieces.forEach((src, index) => {
+    const img = document.createElement('img');
+    img.src = src;
+    img.draggable = true;
+    img.dataset.id = index;
+    img.addEventListener('dragstart', dragStart);
+    puzzlePiecesContainer.appendChild(img);
+
+    const slot = document.createElement('div');
+    slot.classList.add('puzzle-slot');
+    slot.dataset.id = index;
+    slot.style.width = '100px';
+    slot.style.height = '100px';
+    slot.style.border = '1px dashed #aaa';
+    slot.style.margin = '2px';
+    slot.addEventListener('drop', dropPiece);
+    slot.addEventListener('dragover', e => e.preventDefault());
+    puzzleBoard.appendChild(slot);
+  });
+  showScreen('puzzle');
+}
+
+function dragStart(e) {
+  e.dataTransfer.setData('text/plain', e.target.dataset.id);
+  e.dataTransfer.setDragImage(e.target, 30, 30);
+}
+
+function dropPiece(e) {
+  const id = e.dataTransfer.getData('text/plain');
+  const piece = document.querySelector(`img[data-id="${id}"]`);
+  if (e.target.children.length === 0 && e.target.dataset.id === id) {
+    e.target.appendChild(piece);
+  }
+
+  const completed = [...puzzleBoard.children].every(
+    slot => slot.children.length === 1
+  );
+  if (completed) {
+    document.getElementById('puzzle-win').style.display = 'block';
   }
 }
 
-// Таймер сессии
-function startSession() {
-  playStartTime = Date.now();
-  setInterval(() => {
-    const now = Date.now();
-    if (now - playStartTime > maxPlayTime) {
-      const until = now + cooldownTime;
-      localStorage.setItem('cooldownUntil', until);
-      showScreen('lock');
-    }
-  }, 10000);
+// 🧠 Find Pair
+function startPair() {
+  matchedCards = [];
+  flippedCards = [];
+  const items = [...Array(10).keys(), ...Array(10).keys()];
+  items.sort(() => Math.random() - 0.5);
+  pairBoard.innerHTML = '';
+  items.forEach((n, i) => {
+    const card = document.createElement('div');
+    card.className = 'pair-card';
+    card.dataset.value = n;
+    card.innerText = '';
+    card.addEventListener('click', () => flipCard(card));
+    pairBoard.appendChild(card);
+  });
+  showScreen('pair');
 }
 
-// Проверка ограничения
-function isOnCooldown() {
-  const until = parseInt(localStorage.getItem('cooldownUntil') || '0');
-  return Date.now() < until;
+function flipCard(card) {
+  if (flippedCards.length === 2 || card.classList.contains('matched')) return;
+  card.innerText = card.dataset.value;
+  card.classList.add('flipped');
+  flippedCards.push(card);
+  if (flippedCards.length === 2) {
+    setTimeout(() => {
+      if (
+        flippedCards[0].dataset.value === flippedCards[1].dataset.value
+      ) {
+        flippedCards.forEach(c => {
+          c.classList.add('matched');
+          c.style.backgroundColor = '#c2f2c2';
+        });
+        matchedCards.push(...flippedCards);
+        if (matchedCards.length === 20) {
+          document.getElementById('pair-win').style.display = 'block';
+        }
+      } else {
+        flippedCards.forEach(c => {
+          c.classList.remove('flipped');
+          c.innerText = '';
+        });
+      }
+      flippedCards = [];
+    }, 1000);
+  }
 }
 
-// Заглушки для игр 2 и 3 (добавьте позже)
-function startPairGame() {
-  alert('Игра "Найди пару" будет добавлена позже!');
+// 📒 Homework
+function showHomework() {
+  homeworkTextEl.textContent = homeworkText;
+  showScreen('homework');
 }
 
-function startPuzzleGame() {
-  alert('Игра "Помоги собрать" будет добавлена позже!');
-}
+document.getElementById('homework-done-btn').onclick = () => {
+  document.getElementById('fireworks').style.display = 'block';
+  showModal('homeworkDone');
+};
+
+document.getElementById('remind-later-btn').onclick = () => {
+  const time = remindTime.value;
+  if (time) {
+    localStorage.setItem('remind_time', time);
+    alert('Напоминание установлено!');
+  }
+};
+
+document.querySelectorAll('.close-modal').forEach(btn =>
+  btn.addEventListener('click', () => {
+    btn.closest('.modal').classList.remove('visible');
+  })
+);
+
+// Кнопки меню
+document.getElementById('to-game-menu').onclick = () => showScreen('gameMenu');
+document.getElementById('to-menu').onclick = () => showScreen('menu');
+document.getElementById('to-homework').onclick = () => showHomework();
+document.getElementById('riddle-btn').onclick = () => showRiddle(0);
+document.getElementById('pair-btn').onclick = () => startPair();
+document.getElementById('puzzle-btn').onclick = () => startPuzzle();
+
+playButton.onclick = () => {
+  const blockTime = localStorage.getItem('block_until');
+  const now = Date.now();
+  if (blockTime && now < blockTime) {
+    alert('Рикки устал, зайди позже!');
+  } else {
+    showScreen('gameMenu');
+  }
+};
