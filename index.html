@@ -1,91 +1,71 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Рикки - Весёлый Енот</title>
-    <style>
-        body {
-            font-family: 'Comic Sans MS', cursive;
-            background: #FFE6F2;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        #app {
-            width: 100%;
-            max-width: 400px;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-        #room {
-            height: 300px;
-            background: #E6F7FF;
-            position: relative;
-        }
-        #ricky {
-            position: absolute;
-            bottom: 50px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 150px;
-            height: 150px;
-        }
-        #controls {
-            display: flex;
-            justify-content: space-around;
-            padding: 15px;
-            background: #FF9EC6;
-        }
-        button {
-            background: white;
-            border: none;
-            border-radius: 20px;
-            padding: 10px 15px;
-            color: #FF9EC6;
-            font-weight: bold;
-            cursor: pointer;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Рикки — детское приложение</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <div id="app">
-        <div id="room">
-            <div id="ricky">
-                <!-- SVG Рикки -->
-                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="100" cy="100" r="80" fill="#5C4B3E"/>
-                    <circle cx="70" cy="80" r="15" fill="white"/>
-                    <circle cx="130" cy="80" r="15" fill="white"/>
-                    <circle cx="100" cy="120" r="10" fill="black"/>
-                    <path d="M80,150 Q100,130 120,150" stroke="black" fill="none" stroke-width="2"/>
-                </svg>
-            </div>
-        </div>
-        <div id="controls">
-            <button onclick="sleep()">Спать</button>
-            <button onclick="feed()">Кормить</button>
-            <button onclick="play()">Играть</button>
-        </div>
+  <!-- Модальные окна -->
+  <div id="welcome-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Привет!</h2>
+      <p>Рикки хочет знать, когда у тебя день рождения и как тебя зовут!</p>
+      <input type="text" id="username" placeholder="Имя" />
+      <input type="date" id="birthdate" />
+      <button onclick="confirmUserData()">Подтвердить</button>
     </div>
+  </div>
 
-    <script>
-        // Базовый JavaScript
-        function sleep() {
-            alert("Рикки спит! Zzz...");
-        }
-        function feed() {
-            alert("Рикки кушает!");
-        }
-        function play() {
-            alert("Рикки играет!");
-        }
-        console.log("Приложение запущено!");
-    </script>
+  <div id="lock-screen" class="modal hidden">
+    <div class="modal-content center-text">
+      <img src="img/tired.png" alt="Рикки устал" class="rick-image" />
+      <h2>Рикки устал, ему нужно отдохнуть.</h2>
+      <p>Вернись позже, и мы ещё поиграем!</p>
+      <button onclick="goToMainMenu()">Главное меню</button>
+    </div>
+  </div>
+
+  <!-- Экраны -->
+  <div id="main-menu" class="screen hidden">
+    <img src="img/main.png" alt="Рикки" class="rick-image" />
+    <div class="caption">Привет, <span id="name-display"></span>! Я твой знакомый енот Рикки. Давай дружить!</div>
+    <div class="button-container">
+      <button onclick="goToGameMenu()">Играть</button>
+      <button onclick="goToHomework()">Домашнее задание</button>
+    </div>
+  </div>
+
+  <div id="game-menu" class="screen hidden">
+    <h2>Выбери игру</h2>
+    <img src="img/choose.png" alt="Рикки думает" class="rick-image" />
+    <div class="button-container">
+      <button onclick="startBibleGame()">Библейские загадки</button>
+      <button onclick="startPairGame()">Найди пару</button>
+      <button onclick="startPuzzleGame()">Помоги собрать</button>
+    </div>
+    <div class="button-container">
+      <button onclick="goToMainMenu()">Главное меню</button>
+      <button disabled>К выбору игры</button>
+    </div>
+  </div>
+
+  <div id="bible-game" class="screen hidden">
+    <h2>Библейские загадки</h2>
+    <p id="riddle-text"></p>
+    <input type="text" id="riddle-answer" placeholder="Твой ответ..." />
+    <button onclick="checkRiddleAnswer()">Ответить</button>
+    <div id="riddle-feedback" class="hidden">
+      <p class="success-text">Молодец!</p>
+      <img src="img/win.png" alt="Рикки радуется" class="rick-image" />
+      <button onclick="nextRiddle()">Следующая загадка</button>
+    </div>
+    <button onclick="goToGameMenu()">Назад</button>
+  </div>
+
+  <!-- Остальные экраны подключим позже: игры 2, 3, домашнее задание -->
+
+  <script src="script.js"></script>
 </body>
 </html>
