@@ -4,19 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Рикки: Детская Библия</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
 </head>
 <body>
     <div class="app">
-        <!-- Фоновые изображения -->
+        <!-- Фоновое изображение только для главного меню -->
         <div class="backgrounds">
-            <img src="img/hello-bg.png" alt="Приветствие" class="bg-hello">
-            <img src="img/main-bg.jpg" alt="Главное меню" class="bg-main">
-            <img src="img/choose-bg.jpg" alt="Выбор игры" class="bg-choose">
-            <img src="img/win-bg.jpg" alt="Победа" class="bg-win">
-            <img src="img/tired-bg.jpg" alt="Устал" class="bg-tired">
+            <img src="img/main-bg.jpg" alt="Фон главного меню" class="bg-main">
         </div>
 
         <!-- Модальное окно приветствия -->
@@ -39,8 +35,8 @@
                 <p>Привет, <span id="userGreeting"></span>! Я твой знакомый енот Рикки. Давай дружить!</p>
             </div>
             <div class="menu-buttons">
-                <button id="playBtn">Играть</button>
-                <button id="homeworkBtn">Домашнее задание</button>
+                <button id="playBtn" class="green-btn">Играть</button>
+                <button id="homeworkBtn" class="orange-btn">Домашнее задание</button>
             </div>
         </div>
 
@@ -50,12 +46,12 @@
                 <img src="img/choose-character.png" alt="Рикки задумался" class="character">
             </div>
             <div class="game-options">
-                <button id="biblePuzzlesBtn">Библейские загадки</button>
-                <button id="memoryGameBtn">Найди пару</button>
+                <button id="biblePuzzlesBtn" class="green-btn">Библейские загадки</button>
+                <button id="memoryGameBtn" class="blue-btn">Найди пару</button>
             </div>
             <div class="bottom-buttons">
-                <button id="backToMenuBtn">Главное меню</button>
-                <button id="backToChooseBtn" disabled>К выбору игры</button>
+                <button id="backToMenuBtn" class="blue-btn">Главное меню</button>
+                <button id="backToChooseBtn" disabled class="green-btn">К выбору игры</button>
             </div>
         </div>
 
@@ -71,15 +67,15 @@
                 <div class="puzzle-box">
                     <p id="currentPuzzle">Загадка</p>
                     <input type="text" id="answerInput" placeholder="Ваш ответ">
-                    <button id="checkAnswerBtn">Ответить</button>
+                    <button id="checkAnswerBtn" class="green-btn">Ответить</button>
                     <div id="answerFeedback" class="hidden">
                         <p id="feedbackText">Молодец!</p>
-                        <button id="nextPuzzleBtn">Следующая загадка</button>
+                        <button id="nextPuzzleBtn" class="green-btn">Следующая загадка</button>
                     </div>
                 </div>
                 <div class="screen-buttons">
-                    <button id="puzzleMenuBtn">Главное меню</button>
-                    <button id="puzzleChooseBtn">К выбору игры</button>
+                    <button id="puzzleMenuBtn" class="blue-btn">Главное меню</button>
+                    <button id="puzzleChooseBtn" class="green-btn">К выбору игры</button>
                 </div>
             </div>
         </div>
@@ -98,8 +94,8 @@
                     <p>Поздравляем! Ты нашел все пары!</p>
                 </div>
                 <div class="screen-buttons">
-                    <button id="memoryMenuBtn">Главное меню</button>
-                    <button id="memoryChooseBtn">К выбору игры</button>
+                    <button id="memoryMenuBtn" class="blue-btn">Главное меню</button>
+                    <button id="memoryChooseBtn" class="blue-btn">К выбору игры</button>
                 </div>
             </div>
         </div>
@@ -112,17 +108,17 @@
             <div class="homework-content">
                 <p id="homeworkText"></p>
                 <div class="homework-buttons">
-                    <button id="doneBtn">Выполнено</button>
-                    <button id="remindBtn">Напомнить позже</button>
+                    <button id="doneBtn" class="yellow-btn">Выполнено</button>
+                    <button id="remindBtn" class="green-btn">Напомнить позже</button>
                 </div>
                 <div id="reminderInput" class="hidden">
                     <label for="reminderTime">Выберите время напоминания:</label>
                     <input type="datetime-local" id="reminderTime">
-                    <button id="setReminderBtn">Установить напоминание</button>
+                    <button id="setReminderBtn" class="green-btn">Установить напоминание</button>
                 </div>
                 <div class="screen-buttons">
-                    <button id="homeworkMenuBtn">Главное меню</button>
-                    <button id="homeworkChooseBtn">К выбору игры</button>
+                    <button id="homeworkMenuBtn" class="blue-btn">Главное меню</button>
+                    <button id="homeworkChooseBtn" class="green-btn">К выбору игры</button>
                 </div>
             </div>
         </div>
@@ -132,7 +128,7 @@
             <div class="modal-content">
                 <img src="img/tired-character.png" alt="Рикки устал" class="modal-image">
                 <p>Рикки устал, ему нужно отдохнуть. Вернись позже, и мы ещё поиграем!</p>
-                <button id="backToMenuFromBreakBtn">Главное меню</button>
+                <button id="backToMenuFromBreakBtn" class="blue-btn">Главное меню</button>
             </div>
         </div>
         
@@ -140,7 +136,7 @@
         <div class="modal homework-complete hidden">
             <div class="modal-content">
                 <p>Ты большой молодец! Проверим твои знания на детском собрании!</p>
-                <button id="closeHomeworkModalBtn">Закрыть</button>
+                <button id="closeHomeworkModalBtn" class="blue-btn">Закрыть</button>
             </div>
         </div>
     </div>
