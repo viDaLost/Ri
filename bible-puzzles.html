@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Рикки: Библейские загадки</title>
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bible-puzzles-page">
+    <div class="app">
+        <div class="screen bible-puzzles active">
+            <div class="game-header">
+                <h2>Библейские загадки</h2>
+            </div>
+            <div class="game-content">
+                <div class="character-container">
+                    <img src="img/puzzle-character.png" alt="Рикки задумался" class="character">
+                </div>
+                <div class="puzzle-box">
+                    <p id="currentPuzzle">Загадка</p>
+                    <input type="text" id="answerInput" placeholder="Ваш ответ">
+                    <button id="checkAnswerBtn" class="green-btn">Ответить</button>
+                    <div id="answerFeedback" class="hidden">
+                        <p id="feedbackText">Молодец!</p>
+                        <button id="nextPuzzleBtn" class="green-btn">Следующая загадка</button>
+                    </div>
+                </div>
+                <div class="screen-buttons">
+                    <button class="blue-btn" onclick="window.location.href='main-menu.html'">Главное меню</button>
+                    <button class="green-btn" onclick="window.location.href='choose-game.html'">К выбору игры</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
