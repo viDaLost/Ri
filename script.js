@@ -44,20 +44,15 @@ let intervalId = null;
 
 // === ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ ===
 window.onload = () => {
-  const user = JSON.parse(localStorage.getItem('rikkie_user'));
-
   // Скрываем все модальные окна при запуске
-  Object.keys(modals).forEach(key => {
-    modals[key].classList.remove('visible');
-  });
+  Object.values(modals).forEach(modal => modal.classList.remove('visible'));
 
-  // Если пользователь не зарегистрирован — показываем только confirm-modal
+  const user = JSON.parse(localStorage.getItem('rikkie_user'));
   if (!user) {
     showModal('confirm');
     return;
   }
 
-  // Иначе загружаем данные пользователя и показываем меню
   greetName.textContent = user.name;
   gameName.textContent = user.name;
   showScreen('menu');
@@ -78,20 +73,16 @@ document.getElementById('confirm-btn').onclick = () => {
 
 // === ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ ===
 function showScreen(id) {
-  // Убираем класс 'hidden' и 'visible' у всех экранов
-  for (let key in screens) {
-    screens[key].classList.remove('visible');
-    screens[key].classList.remove('hidden');
-  }
-  // Показываем нужный экран
-  screens[id].classList.add('visible');
+  Object.values(screens).forEach(screen => {
+    screen.classList.remove('active');
+  });
+  screens[id].classList.add('active');
 }
 
 // === УПРАВЛЕНИЕ МОДАЛЬНЫМИ ОКНАМИ ===
 function showModal(id) {
-  // Скрываем все модальные окна перед открытием нового
-  Object.keys(modals).forEach(key => {
-    modals[key].classList.remove('visible');
+  Object.values(modals).forEach(modal => {
+    modal.classList.remove('visible');
   });
   modals[id].classList.add('visible');
 }
