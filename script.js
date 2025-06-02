@@ -36,6 +36,7 @@ let currentRiddle = 0;
 let matchedCards = [];
 let flippedCards = [];
 let sessionStart = null;
+let intervalId = null;
 
 // Init
 window.onload = () => {
@@ -56,8 +57,6 @@ window.onload = () => {
     setTimeout(() => showScreen('menu'), blockTime - now);
   } else {
     showScreen('menu');
-    sessionStart = now;
-    setInterval(checkSessionTime, 1000);
   }
 };
 
@@ -77,8 +76,6 @@ document.getElementById('confirm-btn').onclick = () => {
       setTimeout(() => showScreen('menu'), blockTime - now);
     } else {
       showScreen('menu');
-      sessionStart = now;
-      setInterval(checkSessionTime, 1000);
     }
   }
 };
@@ -99,12 +96,13 @@ function closeModal(id) {
 }
 
 function checkSessionTime() {
-  if (!sessionStart) return;
   const now = Date.now();
   const diff = now - sessionStart;
   if (diff > 40 * 60 * 1000) {
     localStorage.setItem('block_until', now + 15 * 60 * 1000);
     showScreen('block');
+    clearInterval(intervalId);
+    intervalId = null;
   }
 }
 
@@ -262,19 +260,27 @@ document.querySelectorAll('.close-modal').forEach(btn =>
 
 // Навигация
 document.getElementById('to-game-menu').onclick = () => showScreen('gameMenu');
-document.getElementById('to-menu').onclick = () => showScreen('menu');
+document.getElementById('to-menu').onclick = () => {
+  showScreen('menu');
+  if (intervalId) {
+    clearInterval(intervalId);
+    intervalId = null;
+  }
+};
 document.getElementById('to-homework').onclick = () => showHomework();
 document.getElementById('riddle-btn').onclick = () => showRiddle(0);
 document.getElementById('pair-btn').onclick = () => startPair();
 document.getElementById('puzzle-btn').onclick = () => startPuzzle();
 
 playButton.onclick = () => {
-  const blockTime = localStorage.getItem('block_until');
+  const blockTime = parseInt(localStorage.getItem('block_until') || '0', 10);
   const now = Date.now();
   if (blockTime && now < blockTime) {
     alert('Рикки устал, зайди позже!');
-  } else {
-    showScreen('gameMenu');
-    sessionStart = Date.now();
+    return;
   }
+
+  showScreen('gameMenu');
+  sessionStart = Date.now();
+  intervalId = setInterval(checkSessionTime, 1000);
 };
