@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Рикки: Главное меню</title>
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="main-menu-page">
+    <div class="app">
+        <!-- Фоновое изображение -->
+        <div class="backgrounds">
+            <img src="img/main-bg.jpg" alt="Фон главного меню" class="bg-main">
+        </div>
+
+        <!-- Главное меню -->
+        <div class="screen main-menu active">
+            <div class="character-container">
+                <img src="img/main-character.png" alt="Рикки" class="character">
+            </div>
+            <div class="greeting-box">
+                <p>Привет, <span id="userGreeting"></span>! Я твой знакомый енот Рикки. Давай дружить!</p>
+            </div>
+            <div class="menu-buttons">
+                <button class="green-btn" onclick="window.location.href='choose-game.html'">Играть</button>
+                <button class="orange-btn" onclick="window.location.href='homework.html'">Домашнее задание</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
