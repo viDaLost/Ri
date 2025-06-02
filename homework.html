@@ -26,12 +26,65 @@
                 </div>
                 <div class="screen-buttons">
                     <button class="blue-btn" onclick="window.location.href='main-menu.html'">Главное меню</button>
-                    <button class="green-btn" onclick="window.location.href='choose-game.html'">К выбору игры</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="app.js"></script>
+    <!-- Модальное окно -->
+    <div class="modal homework-complete hidden" id="homeworkCompleteModal">
+        <div class="modal-content">
+            <p>Ты большой молодец! Проверим твои знания на детском собрании!</p>
+            <button id="closeHomeworkModalBtn" class="blue-btn">Закрыть</button>
+        </div>
+    </div>
+
+    <script>
+        let currentPuzzleIndex = 0;
+        let homeworkCompleteModal = null;
+        
+        async function initHomework() {
+            const homeworkText = document.getElementById('homeworkText');
+            homeworkText.textContent = window.contentData.homework.default;
+            
+            // Создание модального окна
+            homeworkCompleteModal = document.getElementById('homeworkCompleteModal');
+            document.getElementById('closeHomeworkModalBtn').addEventListener('click', () => {
+                homeworkCompleteModal.classList.remove('active');
+                window.location.href = 'main-menu.html';
+            });
+            
+            // Обработчики событий
+            document.getElementById('doneBtn').addEventListener('click', () => {
+                homeworkCompleteModal.classList.add('active');
+            });
+            
+            document.getElementById('remindBtn').addEventListener('click', () => {
+                document.getElementById('reminderInput').classList.toggle('hidden');
+            });
+            
+            document.getElementById('setReminderBtn').addEventListener('click', () => {
+                const reminderTimeValue = document.getElementById('reminderTime').value;
+                
+                if (reminderTimeValue) {
+                    localStorage.setItem('rikkieHomeworkReminder', reminderTimeValue);
+                    alert('Напоминание установлено!');
+                    document.getElementById('reminderInput').classList.add('hidden');
+                } else {
+                    alert('Выберите дату и время напоминания');
+                }
+            });
+        }
+        
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', async () => {
+            await window.loadContent();
+            window.loadUserData();
+            
+            if (document.querySelector('.homework-page')) {
+                initHomework();
+            }
+        });
+    </script>
 </body>
 </html>
