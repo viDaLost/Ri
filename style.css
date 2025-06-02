@@ -1,14 +1,14 @@
 /* Подключение шрифта */
-@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
 
 /* Основные стили */
 body {
     margin: 0;
     padding: 0;
-    font-family: 'Fredoka One', cursive;
-    background-color: #ffe6f0;
+    font-family: 'Luckiest Guy', cursive;
     color: #333;
     overflow: hidden;
+    background-color: #f0f0f0;
 }
 
 .app {
@@ -22,7 +22,7 @@ body {
     box-sizing: border-box;
 }
 
-/* Фоновые изображения */
+/* Фоновое изображение главного меню */
 .backgrounds {
     position: fixed;
     top: 0;
@@ -41,19 +41,6 @@ body {
     height: 100%;
     object-fit: cover;
     transition: opacity 0.5s ease-in-out;
-}
-
-/* Цвета экранов */
-.main-menu {
-    background-color: #fff3e0; /* Бежевый */
-}
-
-.memory-game {
-    background-color: #e3f2fd; /* Светло-голубой */
-}
-
-.bible-puzzles {
-    background-color: #e8f5e9; /* Зелёный */
 }
 
 /* Модальные окна */
@@ -107,10 +94,18 @@ body {
     align-items: center;
     padding: 20px;
     box-sizing: border-box;
+    background-color: #f0f0f0;
 }
 
 .screen.active {
     display: flex;
+}
+
+/* Главное меню с фоновым изображением */
+.main-menu {
+    background: url('../img/main-bg.jpg') no-repeat center center fixed;
+    background-size: cover;
+    background-color: #fff3e0; /* Бежевый цвет как резерв */
 }
 
 .character-container {
@@ -133,8 +128,7 @@ body {
 
 /* Кнопки */
 button {
-    font-family: 'Fredoka One', cursive;
-    background: linear-gradient(145deg, #ff99cc, #ff66b2);
+    font-family: 'Luckiest Guy', cursive;
     border: none;
     border-radius: 25px;
     padding: 15px 25px;
@@ -163,6 +157,28 @@ button.disabled {
     animation: none;
 }
 
+/* Цвета кнопок */
+.green-btn {
+    background: linear-gradient(145deg, #66bb6a, #388e3c);
+    border: 2px solid #388e3c;
+}
+
+.orange-btn {
+    background: linear-gradient(145deg, #ffa726, #f57c00);
+    border: 2px solid #f57c00;
+}
+
+.blue-btn {
+    background: linear-gradient(145deg, #42a5f5, #1565c0);
+    border: 2px solid #1565c0;
+}
+
+.yellow-btn {
+    background: linear-gradient(145deg, #ffeb3b, #fbc02d);
+    border: 2px solid #fbc02d;
+    color: #333;
+}
+
 /* Ввод текста */
 input[type="text"],
 input[type="date"] {
@@ -170,7 +186,7 @@ input[type="date"] {
     padding: 12px;
     margin: 15px 0;
     border-radius: 20px;
-    border: 2px solid #ff99cc;
+    border: 2px solid #ccc;
     font-size: 1.1em;
     font-family: inherit;
     transition: all 0.3s ease;
@@ -178,8 +194,8 @@ input[type="date"] {
 
 input:focus {
     outline: none;
-    border-color: #ff66b2;
-    box-shadow: 0 0 8px rgba(255, 102, 178, 0.5);
+    border-color: #80deea;
+    box-shadow: 0 0 8px rgba(128, 222, 234, 0.5);
 }
 
 /* Плашка приветствия */
@@ -195,204 +211,12 @@ input:focus {
 
 .greeting-box span {
     font-weight: bold;
-    color: #ff66b2;
-}
-
-/* Кнопки меню */
-.menu-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-/* Игровые экраны */
-.game-header {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.game-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-}
-
-.puzzle-box {
-    background-color: #fff0f5;
-    border-radius: 25px;
-    padding: 20px;
-    margin-top: 20px;
-    width: 100%;
-    max-width: 500px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    font-size: 1.1em;
-}
-
-#answerInput {
-    margin: 15px 0;
-}
-
-#answerFeedback {
-    text-align: center;
-    margin-top: 15px;
-}
-
-.feedbackText {
-    color: #ff66b2;
-    font-weight: bold;
-    font-size: 1.2em;
-}
-
-/* Игра "Найди пару" */
-.memory-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 15px;
-    width: 100%;
-    max-width: 500px;
-    margin-top: 20px;
-    perspective: 1000px;
-}
-
-.memory-card {
-    width: 100px;
-    height: 100px;
-    position: relative;
-    transform-style: preserve-3d;
-    transition: transform 0.5s;
-    cursor: pointer;
-}
-
-.memory-card.flipped {
-    transform: rotateY(180deg);
-}
-
-.memory-card-front,
-.memory-card-back {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    backface-visibility: hidden;
-    border-radius: 15px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.memory-card-front {
-    background-color: #ff99cc;
-    color: white;
-    font-size: 2em;
-    border: 3px solid #ff66b2;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-}
-
-.memory-card-back {
-    transform: rotateY(180deg);
-    background-color: #fff;
-    border: 3px solid #ff99cc;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-}
-
-.memory-card.matched .memory-card-front {
-    border-color: #00cc66;
-    box-shadow: 0 0 15px rgba(0, 204, 102, 0.5);
-}
-
-#winMessage {
-    margin-top: 20px;
-    text-align: center;
-    font-size: 1.2em;
-    color: #ff66b2;
-    font-weight: bold;
-}
-
-/* Домашнее задание */
-.homework-content {
-    background-color: #fff0f5;
-    border-radius: 25px;
-    padding: 20px;
-    width: 100%;
-    max-width: 500px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    text-align: center;
-}
-
-.homework-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-top: 20px;
-}
-
-#reminderInput {
-    margin-top: 20px;
-}
-
-#reminderInput input {
-    margin: 10px 0;
-}
-
-/* Кнопки навигации */
-.screen-buttons {
-    margin-top: 20px;
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    max-width: 500px;
-}
-
-.screen-buttons button {
-    flex: 1;
-    margin: 0 5px;
-}
-
-/* Анимации */
-.hidden {
-    display: none;
-}
-
-.fadeIn {
-    animation: fadeIn 0.5s ease-in-out;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-.pulse {
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
+    color: #388e3c;
 }
 
 /* Адаптивность */
 @media (max-width: 600px) {
-    .menu-buttons,
-    .homework-buttons,
-    .screen-buttons {
-        flex-direction: column;
-    }
-    
-    .character-container {
-        max-width: 200px;
-    }
-    
     button {
-        font-size: 1em;
-    }
-    
-    .greeting-box {
-        font-size: 1em;
-    }
-    
-    .puzzle-box {
         font-size: 1em;
     }
 }
