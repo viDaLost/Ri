@@ -87,8 +87,10 @@ function initApp() {
     if (!userData) {
         // Показываем только если нет данных
         welcomeModal.classList.add('active');
+        mainMenu.classList.remove('active');
     } else {
         showMainMenu(userData.name);
+        welcomeModal.classList.remove('active');
     }
     
     // Сохранение данных пользователя
@@ -100,6 +102,7 @@ function initApp() {
             const userData = { name, birthdate };
             localStorage.setItem('rikkieUserData', JSON.stringify(userData));
             welcomeModal.classList.remove('active');
+            mainMenu.classList.add('active');
             showMainMenu(name);
         } else {
             alert('Пожалуйста, заполните все поля');
@@ -233,7 +236,6 @@ function initApp() {
     let matchedCount = 0;
     
     function startMemoryGame() {
-        // Очистка предыдущей игры
         memoryGrid.innerHTML = '';
         cards = [];
         firstCard = null;
@@ -241,16 +243,13 @@ function initApp() {
         lockBoard = false;
         matchedCount = 0;
         
-        // Создание пар
         const pairs = [];
         for (let i = 1; i <= 8; i++) {
             pairs.push(i, i);
         }
         
-        // Перемешивание
         shuffle(pairs);
         
-        // Создание карточек
         pairs.forEach((pairId, index) => {
             const card = document.createElement('div');
             card.classList.add('memory-card');
@@ -268,10 +267,8 @@ function initApp() {
             img.alt = `Пазл ${pairId}`;
             
             back.appendChild(img);
-            
             card.appendChild(front);
             card.appendChild(back);
-            
             card.addEventListener('click', flipCard);
             memoryGrid.appendChild(card);
             cards.push(card);
@@ -290,7 +287,6 @@ function initApp() {
         
         secondCard = this;
         lockBoard = true;
-        
         checkForMatch();
     }
     
@@ -359,7 +355,7 @@ function initApp() {
         mainMenu.classList.add('active');
     });
     
-    // Проверка напоминаний при загрузке
+    // Проверка напоминаний
     function checkReminders() {
         const reminderTime = localStorage.getItem('rikkieHomeworkReminder');
         if (reminderTime) {
@@ -373,7 +369,6 @@ function initApp() {
         }
     }
     
-    // Проверка напоминаний каждые 5 минут
     setInterval(checkReminders, 300000);
     
     // Ограничение времени на игры
@@ -393,7 +388,6 @@ function initApp() {
         setInterval(() => {
             const sessionDuration = Date.now() - gameStartTime;
             
-            // 40 минут = 40 * 60 * 1000 = 2400000 миллисекунд
             if (sessionDuration >= 2400000) {
                 mainMenu.classList.remove('active');
                 chooseGame.classList.remove('active');
@@ -402,10 +396,8 @@ function initApp() {
                 breakNotification.classList.remove('hidden');
                 breakNotification.classList.add('active');
                 
-                // Устанавливаем время окончания перерыва на 15 минут
-                const breakEndTime = Date.now() + 900000; // 15 * 60 * 1000
+                const breakEndTime = Date.now() + 900000;
                 localStorage.setItem('rikkieBreakUntil', breakEndTime.toString());
-                
                 clearInterval(this);
             }
         }, 1000);
@@ -416,7 +408,7 @@ function initApp() {
         mainMenu.classList.add('active');
     });
     
-    // Проверка времени перерыва при загрузке
+    // Проверка времени перерыва
     if (breakUntil && Date.now() < parseInt(breakUntil)) {
         mainMenu.classList.remove('active');
         breakNotification.classList.remove('hidden');
