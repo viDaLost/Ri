@@ -1,14 +1,6 @@
 /* === ОБЩИЕ СТИЛИ === */
-body, html {
-  margin: 0;
-  padding: 0;
-  font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', cursive, sans-serif;
-  background-color: #f0f8ff;
-  overflow-x: hidden;
-  height: 100%;
-}
 .page {
-  display: none;
+  display: none; /* Скрываем по умолчанию */
   position: absolute;
   top: 0;
   left: 0;
@@ -19,6 +11,13 @@ body, html {
   transition: opacity 0.5s ease;
   opacity: 0;
   pointer-events: none;
+}
+
+.page.visible {
+  display: block;
+  opacity: 1;
+  pointer-events: all;
+  position: relative;
 }
 .page.active {
   display: block;
