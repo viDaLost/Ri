@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Рикки: Детская Библия</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
 </head>
@@ -11,11 +12,11 @@
     <div class="app">
         <!-- Фоновые изображения -->
         <div class="backgrounds">
-            <img src="img/hello.png" alt="Приветствие" class="bg-hello">
-            <img src="img/main.png" alt="Главное меню" class="bg-main">
-            <img src="img/choose.png" alt="Выбор игры" class="bg-choose">
-            <img src="img/win.png" alt="Победа" class="bg-win">
-            <img src="img/tired.png" alt="Устал" class="bg-tired">
+            <img src="img/hello-bg.png" alt="Приветствие" class="bg-hello">
+            <img src="img/main-bg.jpg" alt="Главное меню" class="bg-main">
+            <img src="img/choose-bg.jpg" alt="Выбор игры" class="bg-choose">
+            <img src="img/win-bg.jpg" alt="Победа" class="bg-win">
+            <img src="img/tired-bg.jpg" alt="Устал" class="bg-tired">
         </div>
 
         <!-- Модальное окно приветствия -->
@@ -32,7 +33,7 @@
         <!-- Главное меню -->
         <div class="screen main-menu">
             <div class="character-container">
-                <img src="img/main.png" alt="Рикки" class="character">
+                <img src="img/main-character.png" alt="Рикки" class="character">
             </div>
             <div class="greeting-box">
                 <p>Привет, <span id="userGreeting"></span>! Я твой знакомый енот Рикки. Давай дружить!</p>
@@ -46,7 +47,7 @@
         <!-- Меню выбора игры -->
         <div class="screen choose-game">
             <div class="character-container">
-                <img src="img/choose.png" alt="Рикки задумался" class="character">
+                <img src="img/choose-character.png" alt="Рикки задумался" class="character">
             </div>
             <div class="game-options">
                 <button id="biblePuzzlesBtn">Библейские загадки</button>
@@ -65,7 +66,7 @@
             </div>
             <div class="game-content">
                 <div class="character-container">
-                    <img src="img/choose.png" alt="Рикки задумался" class="character">
+                    <img src="img/puzzle-character.png" alt="Рикки задумался" class="character">
                 </div>
                 <div class="puzzle-box">
                     <p id="currentPuzzle">Загадка</p>
@@ -75,6 +76,10 @@
                         <p id="feedbackText">Молодец!</p>
                         <button id="nextPuzzleBtn">Следующая загадка</button>
                     </div>
+                </div>
+                <div class="screen-buttons">
+                    <button id="puzzleMenuBtn">Главное меню</button>
+                    <button id="puzzleChooseBtn">К выбору игры</button>
                 </div>
             </div>
         </div>
@@ -86,11 +91,15 @@
             </div>
             <div class="game-content">
                 <div class="character-container">
-                    <img src="img/choose.png" alt="Рикки задумался" class="character">
+                    <img src="img/memory-character.png" alt="Рикки задумался" class="character">
                 </div>
                 <div class="memory-grid" id="memoryGrid"></div>
                 <div id="winMessage" class="hidden">
                     <p>Поздравляем! Ты нашел все пары!</p>
+                </div>
+                <div class="screen-buttons">
+                    <button id="memoryMenuBtn">Главное меню</button>
+                    <button id="memoryChooseBtn">К выбору игры</button>
                 </div>
             </div>
         </div>
@@ -101,7 +110,6 @@
                 <h2>Домашнее задание</h2>
             </div>
             <div class="homework-content">
-                <!-- Динамически заполняется из JSON -->
                 <p id="homeworkText"></p>
                 <div class="homework-buttons">
                     <button id="doneBtn">Выполнено</button>
@@ -112,20 +120,29 @@
                     <input type="datetime-local" id="reminderTime">
                     <button id="setReminderBtn">Установить напоминание</button>
                 </div>
+                <div class="screen-buttons">
+                    <button id="homeworkMenuBtn">Главное меню</button>
+                    <button id="homeworkChooseBtn">К выбору игры</button>
+                </div>
             </div>
         </div>
 
         <!-- Уведомление о перерыве -->
         <div class="modal break-notification hidden">
             <div class="modal-content">
-                <img src="img/tired.png" alt="Рикки устал" class="modal-image">
+                <img src="img/tired-character.png" alt="Рикки устал" class="modal-image">
                 <p>Рикки устал, ему нужно отдохнуть. Вернись позже, и мы ещё поиграем!</p>
                 <button id="backToMenuFromBreakBtn">Главное меню</button>
             </div>
         </div>
         
-        <!-- Фейерверк для выполнения задания -->
-        <div id="fireworks" class="hidden"></div>
+        <!-- Всплывающее окно при выполнении задания -->
+        <div class="modal homework-complete hidden">
+            <div class="modal-content">
+                <p>Ты большой молодец! Проверим твои знания на детском собрании!</p>
+                <button id="closeHomeworkModalBtn">Закрыть</button>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
