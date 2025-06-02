@@ -1,286 +1,393 @@
-import { riddles } from './riddles.js';
-import { puzzlePieces } from './puzzle-images.js';
-import { homeworkText } from './homework.js';
-
-// === ЭКРАНЫ ===
-const screens = {
-  welcome: document.getElementById('welcome-screen'),
-  menu: document.getElementById('menu-screen'),
-  gameMenu: document.getElementById('game-menu'),
-  riddle: document.getElementById('riddle-screen'),
-  pair: document.getElementById('pair-screen'),
-  puzzle: document.getElementById('puzzle-screen'),
-  homework: document.getElementById('homework-screen'),
-  block: document.getElementById('block-screen'),
+// Глобальные переменные для хранения контента
+let contentData = {
+  homework: {
+    default: "Прочитай 5 стихов из Библии"
+  },
+  puzzles: []
 };
 
-// === МОДАЛЬНЫЕ ОКНА ===
-const modals = {
-  confirm: document.getElementById('confirm-modal'),
-  message: document.getElementById('message-modal'),
-  homeworkDone: document.getElementById('homework-done-modal'),
-};
-
-// === ОСНОВНЫЕ ЭЛЕМЕНТЫ ===
-const nameEl = document.getElementById('name');
-const birthEl = document.getElementById('birth');
-const greetName = document.getElementById('greet-name');
-const gameName = document.getElementById('game-name');
-const riddleText = document.getElementById('riddle-text');
-const riddleInput = document.getElementById('riddle-input');
-const puzzleBoard = document.getElementById('puzzle-board');
-const puzzlePiecesContainer = document.getElementById('puzzle-pieces');
-const homeworkTextEl = document.getElementById('homework-text');
-const remindTime = document.getElementById('remind-time');
-const pairBoard = document.getElementById('pair-board');
-const playButton = document.getElementById('play-button');
-
-// === СТАТУС ИГРЫ ===
-let currentRiddle = 0;
-let matchedCards = [];
-let flippedCards = [];
-let sessionStart = null;
-let intervalId = null;
-
-// === ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ ===
-window.onload = () => {
-  // Скрываем все модальные окна при запуске
-  Object.values(modals).forEach(modal => modal.classList.remove('visible'));
-
-  const user = JSON.parse(localStorage.getItem('rikkie_user'));
-  if (!user) {
-    showModal('confirm');
-    return;
-  }
-
-  greetName.textContent = user.name;
-  gameName.textContent = user.name;
-  showScreen('menu');
-};
-
-// === КНОПКА РЕГИСТРАЦИИ ===
-document.getElementById('confirm-btn').onclick = () => {
-  const name = nameEl.value.trim();
-  const birth = birthEl.value;
-  if (name && birth) {
-    localStorage.setItem('rikkie_user', JSON.stringify({ name, birth }));
-    greetName.textContent = name;
-    gameName.textContent = name;
-    closeModal('confirm');
-    showScreen('menu');
-  }
-};
-
-// === ПЕРЕКЛЮЧЕНИЕ ЭКРАНОВ ===
-function showScreen(id) {
-  Object.values(screens).forEach(screen => {
-    screen.classList.remove('active');
-  });
-  screens[id].classList.add('active');
-}
-
-// === УПРАВЛЕНИЕ МОДАЛЬНЫМИ ОКНАМИ ===
-function showModal(id) {
-  Object.values(modals).forEach(modal => {
-    modal.classList.remove('visible');
-  });
-  modals[id].classList.add('visible');
-}
-
-function closeModal(id) {
-  modals[id].classList.remove('visible');
-}
-
-// === ПРОВЕРКА ВРЕМЕНИ СЕАНСА ===
-function checkSessionTime() {
-  const now = Date.now();
-  const diff = now - sessionStart;
-  if (diff > 40 * 60 * 1000) {
-    localStorage.setItem('block_until', now + 15 * 60 * 1000);
-    showScreen('block');
-    clearInterval(intervalId);
-    intervalId = null;
-  }
-}
-
-// === БИБЛЕЙСКИЕ ЗАГАДКИ ===
-function showRiddle(index) {
-  currentRiddle = index;
-  riddleText.textContent = riddles[index].question;
-  riddleInput.value = '';
-  showScreen('riddle');
-}
-
-document.getElementById('riddle-submit').onclick = () => {
-  const input = riddleInput.value.trim().toLowerCase();
-  const answer = riddles[currentRiddle].answer.toLowerCase();
-  if (input === answer) {
-    document.getElementById('riddle-result').textContent = 'Молодец!';
-    document.getElementById('riddle-win').style.display = 'block';
-  } else {
-    document.getElementById('riddle-result').textContent = 'Попробуй ещё!';
-  }
-};
-
-document.getElementById('next-riddle').onclick = () => {
-  currentRiddle = (currentRiddle + 1) % riddles.length;
-  showRiddle(currentRiddle);
-  document.getElementById('riddle-result').textContent = '';
-  document.getElementById('riddle-win').style.display = 'none';
-};
-
-// === ПАЗЛ ===
-function startPuzzle() {
-  puzzleBoard.innerHTML = '';
-  puzzlePiecesContainer.innerHTML = '';
-  document.getElementById('puzzle-win').style.display = 'none';
-
-  puzzlePieces.forEach((src, index) => {
-    const img = document.createElement('img');
-    img.src = src;
-    img.draggable = true;
-    img.dataset.id = index;
-    img.addEventListener('dragstart', dragStart);
-    puzzlePiecesContainer.appendChild(img);
-
-    const slot = document.createElement('div');
-    slot.classList.add('puzzle-slot');
-    slot.dataset.id = index;
-    slot.style.width = '100px';
-    slot.style.height = '100px';
-    slot.style.border = '1px dashed #aaa';
-    slot.style.margin = '2px';
-    slot.addEventListener('drop', dropPiece);
-    slot.addEventListener('dragover', e => e.preventDefault());
-    puzzleBoard.appendChild(slot);
-  });
-
-  showScreen('puzzle');
-}
-
-function dragStart(e) {
-  e.dataTransfer.setData('text/plain', e.target.dataset.id);
-  e.dataTransfer.setDragImage(e.target, 30, 30);
-}
-
-function dropPiece(e) {
-  const id = e.dataTransfer.getData('text/plain');
-  const piece = document.querySelector(`img[data-id="${id}"]`);
-  if (e.target.children.length === 0 && e.target.dataset.id === id) {
-    e.target.appendChild(piece);
-  }
-
-  const completed = [...puzzleBoard.children].every(
-    slot => slot.children.length === 1
-  );
-
-  if (completed) {
-    document.getElementById('puzzle-win').style.display = 'block';
-  }
-}
-
-// === НАЙДИ ПАРУ ===
-function startPair() {
-  matchedCards = [];
-  flippedCards = [];
-  const items = [...Array(10).keys(), ...Array(10).keys()];
-  items.sort(() => Math.random() - 0.5);
-  pairBoard.innerHTML = '';
-  document.getElementById('pair-win').style.display = 'none';
-
-  items.forEach((n, i) => {
-    const card = document.createElement('div');
-    card.className = 'pair-card';
-    card.dataset.value = n;
-    card.innerText = '';
-    card.addEventListener('click', () => flipCard(card));
-    pairBoard.appendChild(card);
-  });
-
-  showScreen('pair');
-}
-
-function flipCard(card) {
-  if (flippedCards.length === 2 || card.classList.contains('matched')) return;
-  card.innerText = card.dataset.value;
-  card.classList.add('flipped');
-  flippedCards.push(card);
-
-  if (flippedCards.length === 2) {
-    setTimeout(() => {
-      if (
-        flippedCards[0].dataset.value === flippedCards[1].dataset.value
-      ) {
-        flippedCards.forEach(c => {
-          c.classList.add('matched');
-          c.style.backgroundColor = '#c2f2c2';
-        });
-        matchedCards.push(...flippedCards);
-        if (matchedCards.length === 20) {
-          document.getElementById('pair-win').style.display = 'block';
-        }
-      } else {
-        flippedCards.forEach(c => {
-          c.classList.remove('flipped');
-          c.innerText = '';
-        });
+// Загрузка контента из JSON
+document.addEventListener('DOMContentLoaded', () => {
+  fetch('content.json')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Ошибка загрузки контента');
       }
-      flippedCards = [];
-    }, 1000);
-  }
+      return response.json();
+    })
+    .then(data => {
+      contentData = data;
+      initApp(); // Инициализация приложения после загрузки контента
+    })
+    .catch(error => {
+      console.error('Используется резервный контент:', error);
+      initApp(); // Инициализация с резервным контентом
+    });
+});
+
+// Основная функция инициализации приложения
+function initApp() {
+    const welcomeModal = document.querySelector('.welcome-modal');
+    const mainMenu = document.querySelector('.main-menu');
+    const chooseGame = document.querySelector('.choose-game');
+    const biblePuzzles = document.querySelector('.bible-puzzles');
+    const memoryGame = document.querySelector('.memory-game');
+    const homework = document.querySelector('.homework');
+    const breakNotification = document.querySelector('.break-notification');
+    
+    const usernameInput = document.getElementById('username');
+    const birthdateInput = document.getElementById('birthdate');
+    const confirmBtn = document.getElementById('confirmBtn');
+    const userGreeting = document.getElementById('userGreeting');
+    
+    const playBtn = document.getElementById('playBtn');
+    const homeworkBtn = document.getElementById('homeworkBtn');
+    
+    const backToMenuBtn = document.getElementById('backToMenuBtn');
+    const backToChooseBtn = document.getElementById('backToChooseBtn');
+    
+    const biblePuzzlesBtn = document.getElementById('biblePuzzlesBtn');
+    const memoryGameBtn = document.getElementById('memoryGameBtn');
+    
+    // Игра "Библейские загадки"
+    const currentPuzzle = document.getElementById('currentPuzzle');
+    const answerInput = document.getElementById('answerInput');
+    const checkAnswerBtn = document.getElementById('checkAnswerBtn');
+    const answerFeedback = document.getElementById('answerFeedback');
+    const feedbackText = document.getElementById('feedbackText');
+    const nextPuzzleBtn = document.getElementById('nextPuzzleBtn');
+    
+    // Игра "Найди пару"
+    const memoryGrid = document.getElementById('memoryGrid');
+    const winMessage = document.getElementById('winMessage');
+    
+    // Домашнее задание
+    const homeworkText = document.getElementById('homeworkText');
+    const doneBtn = document.getElementById('doneBtn');
+    const remindBtn = document.getElementById('remindBtn');
+    const reminderInput = document.getElementById('reminderInput');
+    const reminderTime = document.getElementById('reminderTime');
+    const setReminderBtn = document.getElementById('setReminderBtn');
+    
+    // Уведомление о перерыве
+    const backToMenuFromBreakBtn = document.getElementById('backToMenuFromBreakBtn');
+    
+    // Фейерверк
+    const fireworks = document.getElementById('fireworks');
+    
+    // Проверка первого запуска
+    const userData = JSON.parse(localStorage.getItem('rikkieUserData'));
+    if (!userData) {
+        welcomeModal.classList.add('active');
+    } else {
+        showMainMenu(userData.name);
+    }
+    
+    // Сохранение данных пользователя
+    confirmBtn.addEventListener('click', () => {
+        const name = usernameInput.value.trim();
+        const birthdate = birthdateInput.value;
+        
+        if (name && birthdate) {
+            const userData = { name, birthdate };
+            localStorage.setItem('rikkieUserData', JSON.stringify(userData));
+            welcomeModal.classList.remove('active');
+            showMainMenu(name);
+        } else {
+            alert('Пожалуйста, заполните все поля');
+        }
+    });
+    
+    // Отображение главного меню
+    function showMainMenu(name) {
+        userGreeting.textContent = name;
+        mainMenu.classList.add('active');
+        startGameTimer();
+    }
+    
+    // Обработчики кликов по кнопкам
+    playBtn.addEventListener('click', () => {
+        mainMenu.classList.remove('active');
+        chooseGame.classList.add('active');
+    });
+    
+    homeworkBtn.addEventListener('click', () => {
+        mainMenu.classList.remove('active');
+        homework.classList.add('active');
+        homeworkText.textContent = contentData.homework.default;
+    });
+    
+    backToMenuBtn.addEventListener('click', () => {
+        chooseGame.classList.remove('active');
+        homework.classList.remove('active');
+        mainMenu.classList.add('active');
+    });
+    
+    backToChooseBtn.addEventListener('click', () => {
+        biblePuzzles.classList.remove('active');
+        memoryGame.classList.remove('active');
+        chooseGame.classList.add('active');
+    });
+    
+    // Выбор игры
+    biblePuzzlesBtn.addEventListener('click', () => {
+        chooseGame.classList.remove('active');
+        biblePuzzles.classList.add('active');
+        startPuzzleGame();
+    });
+    
+    memoryGameBtn.addEventListener('click', () => {
+        chooseGame.classList.remove('active');
+        memoryGame.classList.add('active');
+        startMemoryGame();
+    });
+    
+    // Игра "Библейские загадки"
+    let currentPuzzleIndex = 0;
+    let currentPuzzleAnswer = "";
+    
+    function startPuzzleGame() {
+        if (currentPuzzleIndex >= contentData.puzzles.length) {
+            currentPuzzleIndex = 0;
+        }
+        
+        const puzzle = contentData.puzzles[currentPuzzleIndex];
+        currentPuzzle.textContent = puzzle.question;
+        currentPuzzleAnswer = puzzle.answer.toLowerCase();
+        answerInput.value = '';
+        answerFeedback.classList.add('hidden');
+    }
+    
+    checkAnswerBtn.addEventListener('click', () => {
+        const userAnswer = answerInput.value.trim().toLowerCase();
+        
+        if (userAnswer === currentPuzzleAnswer) {
+            feedbackText.textContent = "Молодец!";
+            answerFeedback.classList.remove('hidden');
+        } else {
+            feedbackText.textContent = "Попробуй еще раз!";
+            answerFeedback.classList.remove('hidden');
+        }
+    });
+    
+    nextPuzzleBtn.addEventListener('click', () => {
+        currentPuzzleIndex++;
+        if (currentPuzzleIndex < contentData.puzzles.length) {
+            startPuzzleGame();
+        } else {
+            currentPuzzle.textContent = "Вы прошли все загадки! Молодец!";
+            answerFeedback.classList.add('hidden');
+            nextPuzzleBtn.textContent = "Вернуться к выбору игры";
+            nextPuzzleBtn.addEventListener('click', () => {
+                biblePuzzles.classList.remove('active');
+                chooseGame.classList.add('active');
+                currentPuzzleIndex = 0;
+            }, { once: true });
+        }
+    });
+    
+    // Игра "Найди пару"
+    let cards = [];
+    let firstCard = null;
+    let secondCard = null;
+    let lockBoard = false;
+    let matchedCount = 0;
+    
+    function startMemoryGame() {
+        // Очистка предыдущей игры
+        memoryGrid.innerHTML = '';
+        cards = [];
+        firstCard = null;
+        secondCard = null;
+        lockBoard = false;
+        matchedCount = 0;
+        
+        // Создание пар
+        const pairs = [];
+        for (let i = 1; i <= 8; i++) {
+            pairs.push(i, i);
+        }
+        
+        // Перемешивание
+        shuffle(pairs);
+        
+        // Создание карточек
+        pairs.forEach((pairId, index) => {
+            const card = document.createElement('div');
+            card.classList.add('memory-card');
+            card.dataset.pairId = pairId;
+            
+            const front = document.createElement('div');
+            front.classList.add('memory-card-front');
+            front.textContent = '❓';
+            
+            const back = document.createElement('div');
+            back.classList.add('memory-card-back');
+            
+            const img = document.createElement('img');
+            img.src = `img/puzzle-pieces/piece${pairId}.png`;
+            img.alt = `Пазл ${pairId}`;
+            
+            back.appendChild(img);
+            
+            card.appendChild(front);
+            card.appendChild(back);
+            
+            card.addEventListener('click', flipCard);
+            memoryGrid.appendChild(card);
+            cards.push(card);
+        });
+    }
+    
+    function flipCard() {
+        if (lockBoard || this.classList.contains('flipped') || this.classList.contains('matched')) return;
+        
+        this.classList.add('flipped');
+        
+        if (!firstCard) {
+            firstCard = this;
+            return;
+        }
+        
+        secondCard = this;
+        lockBoard = true;
+        
+        checkForMatch();
+    }
+    
+    function checkForMatch() {
+        const isMatch = firstCard.dataset.pairId === secondCard.dataset.pairId;
+        
+        if (isMatch) {
+            firstCard.classList.add('matched');
+            secondCard.classList.add('matched');
+            matchedCount += 2;
+            resetTurn();
+            
+            if (matchedCount === cards.length) {
+                winMessage.classList.remove('hidden');
+                setTimeout(() => {
+                    memoryGame.classList.remove('active');
+                    chooseGame.classList.add('active');
+                    winMessage.classList.add('hidden');
+                }, 3000);
+            }
+        } else {
+            setTimeout(() => {
+                firstCard.classList.remove('flipped');
+                secondCard.classList.remove('flipped');
+                resetTurn();
+            }, 1000);
+        }
+    }
+    
+    function resetTurn() {
+        [firstCard, secondCard] = [null, null];
+        lockBoard = false;
+    }
+    
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+    
+    // Домашнее задание
+    remindBtn.addEventListener('click', () => {
+        reminderInput.classList.toggle('hidden');
+    });
+    
+    setReminderBtn.addEventListener('click', () => {
+        const reminderTimeValue = reminderTime.value;
+        
+        if (reminderTimeValue) {
+            localStorage.setItem('rikkieHomeworkReminder', reminderTimeValue);
+            alert('Напоминание установлено!');
+            reminderInput.classList.add('hidden');
+        } else {
+            alert('Выберите дату и время напоминания');
+        }
+    });
+    
+    doneBtn.addEventListener('click', () => {
+        fireworks.classList.add('active');
+        fireworks.classList.remove('hidden');
+        
+        setTimeout(() => {
+            fireworks.classList.remove('active');
+            setTimeout(() => {
+                fireworks.classList.add('hidden');
+                homework.classList.remove('active');
+                mainMenu.classList.add('active');
+            }, 1000);
+        }, 3000);
+        
+        // Удаление напоминания, если оно было установлено
+        localStorage.removeItem('rikkieHomeworkReminder');
+    });
+    
+    // Проверка напоминаний при загрузке
+    function checkReminders() {
+        const reminderTime = localStorage.getItem('rikkieHomeworkReminder');
+        if (reminderTime) {
+            const now = new Date();
+            const reminder = new Date(reminderTime);
+            
+            if (now >= reminder) {
+                alert('Время выполнить домашнее задание!');
+                localStorage.removeItem('rikkieHomeworkReminder');
+            }
+        }
+    }
+    
+    // Проверка напоминаний каждые 5 минут
+    setInterval(checkReminders, 300000);
+    
+    // Ограничение времени на игры
+    let gameStartTime = Date.now();
+    let breakUntil = localStorage.getItem('rikkieBreakUntil');
+    
+    function startGameTimer() {
+        if (breakUntil && Date.now() < parseInt(breakUntil)) {
+            mainMenu.classList.remove('active');
+            breakNotification.classList.remove('hidden');
+            breakNotification.classList.add('active');
+            return;
+        }
+        
+        gameStartTime = Date.now();
+        
+        setInterval(() => {
+            const sessionDuration = Date.now() - gameStartTime;
+            
+            // 40 минут = 40 * 60 * 1000 = 2400000 миллисекунд
+            if (sessionDuration >= 2400000) {
+                mainMenu.classList.remove('active');
+                chooseGame.classList.remove('active');
+                biblePuzzles.classList.remove('active');
+                memoryGame.classList.remove('active');
+                breakNotification.classList.remove('hidden');
+                breakNotification.classList.add('active');
+                
+                // Устанавливаем время окончания перерыва на 15 минут
+                const breakEndTime = Date.now() + 900000; // 15 * 60 * 1000
+                localStorage.setItem('rikkieBreakUntil', breakEndTime.toString());
+                
+                clearInterval(this);
+            }
+        }, 1000);
+    }
+    
+    backToMenuFromBreakBtn.addEventListener('click', () => {
+        breakNotification.classList.remove('active');
+        mainMenu.classList.add('active');
+    });
+    
+    // Проверка времени перерыва при загрузке
+    if (breakUntil && Date.now() < parseInt(breakUntil)) {
+        mainMenu.classList.remove('active');
+        breakNotification.classList.remove('hidden');
+        breakNotification.classList.add('active');
+    }
 }
-
-// === ДОМАШНЕЕ ЗАДАНИЕ ===
-function showHomework() {
-  homeworkTextEl.textContent = homeworkText;
-  showScreen('homework');
-}
-
-document.getElementById('homework-done-btn').onclick = () => {
-  document.getElementById('fireworks').style.display = 'block';
-  showModal('homeworkDone');
-};
-
-document.getElementById('remind-later-btn').onclick = () => {
-  const time = remindTime.value;
-  if (time) {
-    localStorage.setItem('remind_time', time);
-    alert('Напоминание установлено!');
-  }
-};
-
-// === ЗАКРЫТИЕ МОДАЛЬНЫХ ОКОН ===
-document.querySelectorAll('.close-modal').forEach(btn =>
-  btn.addEventListener('click', () => {
-    btn.closest('.modal').classList.remove('visible');
-  })
-);
-
-// === НАВИГАЦИЯ ===
-document.getElementById('to-game-menu').onclick = () => showScreen('gameMenu');
-document.getElementById('to-menu').onclick = () => {
-  showScreen('menu');
-  if (intervalId) {
-    clearInterval(intervalId);
-    intervalId = null;
-  }
-};
-document.getElementById('to-homework').onclick = () => showHomework();
-document.getElementById('riddle-btn').onclick = () => showRiddle(0);
-document.getElementById('pair-btn').onclick = () => startPair();
-document.getElementById('puzzle-btn').onclick = () => startPuzzle();
-
-// === КНОПКА ИГРАТЬ ===
-playButton.onclick = () => {
-  const blockTime = parseInt(localStorage.getItem('block_until') || '0', 10);
-  const now = Date.now();
-
-  if (blockTime && now < blockTime) {
-    showModal('message'); // Показывается только по условию
-    return;
-  }
-
-  showScreen('gameMenu');
-  sessionStart = Date.now();
-  intervalId = setInterval(checkSessionTime, 1000);
-};
