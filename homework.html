@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Рикки: Домашнее задание</title>
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="homework-page">
+    <div class="app">
+        <div class="screen homework active">
+            <div class="game-header">
+                <h2>Домашнее задание</h2>
+            </div>
+            <div class="homework-content">
+                <p id="homeworkText"></p>
+                <div class="homework-buttons">
+                    <button id="doneBtn" class="yellow-btn">Выполнено</button>
+                    <button id="remindBtn" class="green-btn">Напомнить позже</button>
+                </div>
+                <div id="reminderInput" class="hidden">
+                    <label for="reminderTime">Выберите время напоминания:</label>
+                    <input type="datetime-local" id="reminderTime">
+                    <button id="setReminderBtn" class="green-btn">Установить напоминание</button>
+                </div>
+                <div class="screen-buttons">
+                    <button class="blue-btn" onclick="window.location.href='main-menu.html'">Главное меню</button>
+                    <button class="green-btn" onclick="window.location.href='choose-game.html'">К выбору игры</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
