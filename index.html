@@ -1,132 +1,133 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Рикки - Детское приложение</title>
-  <link rel="stylesheet" href="style.css"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Рикки: Детская Библия</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
 </head>
 <body>
+    <div class="app">
+        <!-- Фоновые изображения -->
+        <div class="backgrounds">
+            <img src="img/hello.png" alt="Приветствие" class="bg-hello">
+            <img src="img/main.png" alt="Главное меню" class="bg-main">
+            <img src="img/choose.png" alt="Выбор игры" class="bg-choose">
+            <img src="img/win.png" alt="Победа" class="bg-win">
+            <img src="img/tired.png" alt="Устал" class="bg-tired">
+        </div>
 
-  <!-- Модальное окно: Регистрация -->
-  <div id="confirm-modal" class="modal">
-    <div class="modal-content">
-      <span class="close-modal">&times;</span>
-      <h2>Привет!</h2>
-      <p>Расскажи Рикки своё имя и когда у тебя день рождения:</p>
-      <input type="text" id="name" placeholder="Твоё имя"/>
-      <input type="date" id="birth"/>
-      <button id="confirm-btn">Подтвердить</button>
+        <!-- Модальное окно приветствия -->
+        <div class="modal welcome-modal active">
+            <div class="modal-content">
+                <h1>Привет!</h1>
+                <p>Рикки хочет знать, когда у тебя день рождения и как тебя зовут!</p>
+                <input type="text" id="username" placeholder="Твое имя" required>
+                <input type="date" id="birthdate" required>
+                <button id="confirmBtn">Подтвердить</button>
+            </div>
+        </div>
+
+        <!-- Главное меню -->
+        <div class="screen main-menu">
+            <div class="character-container">
+                <img src="img/main.png" alt="Рикки" class="character">
+            </div>
+            <div class="greeting-box">
+                <p>Привет, <span id="userGreeting"></span>! Я твой знакомый енот Рикки. Давай дружить!</p>
+            </div>
+            <div class="menu-buttons">
+                <button id="playBtn">Играть</button>
+                <button id="homeworkBtn">Домашнее задание</button>
+            </div>
+        </div>
+
+        <!-- Меню выбора игры -->
+        <div class="screen choose-game">
+            <div class="character-container">
+                <img src="img/choose.png" alt="Рикки задумался" class="character">
+            </div>
+            <div class="game-options">
+                <button id="biblePuzzlesBtn">Библейские загадки</button>
+                <button id="memoryGameBtn">Найди пару</button>
+            </div>
+            <div class="bottom-buttons">
+                <button id="backToMenuBtn">Главное меню</button>
+                <button id="backToChooseBtn" disabled>К выбору игры</button>
+            </div>
+        </div>
+
+        <!-- Экран загадок -->
+        <div class="screen bible-puzzles">
+            <div class="game-header">
+                <h2>Библейские загадки</h2>
+            </div>
+            <div class="game-content">
+                <div class="character-container">
+                    <img src="img/choose.png" alt="Рикки задумался" class="character">
+                </div>
+                <div class="puzzle-box">
+                    <p id="currentPuzzle">Загадка</p>
+                    <input type="text" id="answerInput" placeholder="Ваш ответ">
+                    <button id="checkAnswerBtn">Ответить</button>
+                    <div id="answerFeedback" class="hidden">
+                        <p id="feedbackText">Молодец!</p>
+                        <button id="nextPuzzleBtn">Следующая загадка</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Игра "Найди пару" -->
+        <div class="screen memory-game">
+            <div class="game-header">
+                <h2>Найди пару</h2>
+            </div>
+            <div class="game-content">
+                <div class="character-container">
+                    <img src="img/choose.png" alt="Рикки задумался" class="character">
+                </div>
+                <div class="memory-grid" id="memoryGrid"></div>
+                <div id="winMessage" class="hidden">
+                    <p>Поздравляем! Ты нашел все пары!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Домашнее задание -->
+        <div class="screen homework">
+            <div class="game-header">
+                <h2>Домашнее задание</h2>
+            </div>
+            <div class="homework-content">
+                <!-- Динамически заполняется из JSON -->
+                <p id="homeworkText"></p>
+                <div class="homework-buttons">
+                    <button id="doneBtn">Выполнено</button>
+                    <button id="remindBtn">Напомнить позже</button>
+                </div>
+                <div id="reminderInput" class="hidden">
+                    <label for="reminderTime">Выберите время напоминания:</label>
+                    <input type="datetime-local" id="reminderTime">
+                    <button id="setReminderBtn">Установить напоминание</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Уведомление о перерыве -->
+        <div class="modal break-notification hidden">
+            <div class="modal-content">
+                <img src="img/tired.png" alt="Рикки устал" class="modal-image">
+                <p>Рикки устал, ему нужно отдохнуть. Вернись позже, и мы ещё поиграем!</p>
+                <button id="backToMenuFromBreakBtn">Главное меню</button>
+            </div>
+        </div>
+        
+        <!-- Фейерверк для выполнения задания -->
+        <div id="fireworks" class="hidden"></div>
     </div>
-  </div>
 
-  <!-- Модальное окно: Сообщение о блокировке -->
-  <div id="message-modal" class="modal">
-    <div class="modal-content">
-      <span class="close-modal">&times;</span>
-      <img src="img/tired.png" alt="Усталый Рикки" style="max-width: 100px; margin-bottom: 10px;">
-      <h2>Рикки устал</h2>
-      <p>Вернись позже, и мы ещё поиграем!</p>
-      <button onclick="document.getElementById('message-modal').classList.remove('visible')">ОК</button>
-    </div>
-  </div>
-
-  <!-- Модальное окно: Выполнение домашнего задания -->
-  <div id="homework-done-modal" class="modal">
-    <div class="modal-content">
-      <h2>Ты большой молодец!</h2>
-      <p>Проверим твои знания на детском занятии!</p>
-      <div class="fireworks" id="fireworks"></div>
-      <button onclick="document.getElementById('homework-done-modal').classList.remove('visible')">Закрыть</button>
-    </div>
-  </div>
-
-  <!-- Приветствие -->
-  <div id="welcome-screen" class="page"></div>
-
-  <!-- Экран блокировки -->
-  <div id="block-screen" class="page">
-    <img src="img/tired.png" alt="Усталый Рикки" />
-    <h2>Рикки устал</h2>
-    <p>Вернись позже, и мы ещё поиграем!</p>
-    <button id="to-menu">Главное меню</button>
-  </div>
-
-  <!-- Главное меню -->
-  <div id="menu-screen" class="page">
-    <img src="img/main.png" alt="Рикки" />
-    <p class="bubble">Привет, <span id="greet-name">друг</span>! Я твой знакомый енот Рикки. Давай дружить!</p>
-    <button id="play-button">Играть</button>
-    <button id="to-homework">Домашнее задание</button>
-  </div>
-
-  <!-- Меню игр -->
-  <div id="game-menu" class="page">
-    <img src="img/choose.png" alt="Задумчивый Рикки" />
-    <h2>Выбери игру</h2>
-    <div class="menu-buttons">
-      <button id="riddle-btn">Библейские загадки</button>
-      <button id="pair-btn">Найди пару</button>
-      <button id="puzzle-btn">Помоги собрать</button>
-    </div>
-    <button id="to-menu">Главное меню</button>
-  </div>
-
-  <!-- Библейские загадки -->
-  <div id="riddle-screen" class="page">
-    <h2>Библейские загадки</h2>
-    <p id="riddle-text"></p>
-    <input type="text" id="riddle-input" placeholder="Твой ответ"/>
-    <button id="riddle-submit">Ответить</button>
-    <div id="riddle-result"></div>
-    <div id="riddle-win" style="display:none;">
-      <img src="img/win.png" alt="Победа"/>
-      <p>Молодец!</p>
-      <button id="next-riddle">Следующая загадка</button>
-    </div>
-    <button id="to-game-menu">Назад</button>
-  </div>
-
-  <!-- Найди пару -->
-  <div id="pair-screen" class="page">
-    <h2>Найди пару</h2>
-    <div id="pair-board"></div>
-    <div id="pair-win" style="display:none;">
-      <img src="img/win.png" alt="Победа"/>
-      <p>Ты справился!</p>
-      <button id="to-game-menu">Назад</button>
-    </div>
-  </div>
-
-  <!-- Пазл -->
-  <div id="puzzle-screen" class="page">
-    <h2>Помоги собрать</h2>
-    <div id="puzzle-board"></div>
-    <div id="puzzle-pieces"></div>
-    <div id="puzzle-win" style="display:none;">
-      <img src="img/win.png" alt="Победа"/>
-      <p>Пазл собран!</p>
-      <button id="to-game-menu">Назад</button>
-    </div>
-  </div>
-
-  <!-- Домашнее задание -->
-  <div id="homework-screen" class="page">
-    <h2>Домашнее задание</h2>
-    <p id="homework-text">Загрузка...</p>
-    <div class="menu-buttons">
-      <button id="homework-done-btn">Выполнено</button>
-      <label for="remind-time">Напомнить через:</label>
-      <select id="remind-time">
-        <option value="3600000">1 час</option>
-        <option value="7200000">2 часа</option>
-        <option value="10800000">3 часа</option>
-      </select>
-      <button id="remind-later-btn">Напомнить позже</button>
-    </div>
-  </div>
-
-  <!-- Скрипты -->
-  <script type="module" src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
