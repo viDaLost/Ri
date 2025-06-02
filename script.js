@@ -37,12 +37,11 @@ let matchedCards = [];
 let flippedCards = [];
 
 let sessionStart = null;
-let blockUntil = null;
 
 // Init
 window.onload = () => {
   const user = JSON.parse(localStorage.getItem('rikkie_user'));
-  const blockTime = localStorage.getItem('block_until');
+  const blockTime = parseInt(localStorage.getItem('block_until') || '0', 10);
   const now = Date.now();
 
   if (blockTime && now < blockTime) {
@@ -125,11 +124,12 @@ document.getElementById('next-riddle').onclick = () => {
   document.getElementById('riddle-result').textContent = '';
   document.getElementById('riddle-win').style.display = 'none';
 };
-
 // 🧩 Puzzle
 function startPuzzle() {
   puzzleBoard.innerHTML = '';
   puzzlePiecesContainer.innerHTML = '';
+  document.getElementById('puzzle-win').style.display = 'none';
+
   puzzlePieces.forEach((src, index) => {
     const img = document.createElement('img');
     img.src = src;
@@ -149,6 +149,7 @@ function startPuzzle() {
     slot.addEventListener('dragover', e => e.preventDefault());
     puzzleBoard.appendChild(slot);
   });
+
   showScreen('puzzle');
 }
 
@@ -179,6 +180,8 @@ function startPair() {
   const items = [...Array(10).keys(), ...Array(10).keys()];
   items.sort(() => Math.random() - 0.5);
   pairBoard.innerHTML = '';
+  document.getElementById('pair-win').style.display = 'none';
+
   items.forEach((n, i) => {
     const card = document.createElement('div');
     card.className = 'pair-card';
@@ -187,6 +190,7 @@ function startPair() {
     card.addEventListener('click', () => flipCard(card));
     pairBoard.appendChild(card);
   });
+
   showScreen('pair');
 }
 
@@ -195,6 +199,7 @@ function flipCard(card) {
   card.innerText = card.dataset.value;
   card.classList.add('flipped');
   flippedCards.push(card);
+
   if (flippedCards.length === 2) {
     setTimeout(() => {
       if (
@@ -238,13 +243,14 @@ document.getElementById('remind-later-btn').onclick = () => {
   }
 };
 
+// Закрытие модалок
 document.querySelectorAll('.close-modal').forEach(btn =>
   btn.addEventListener('click', () => {
     btn.closest('.modal').classList.remove('visible');
   })
 );
 
-// Кнопки меню
+// Навигация
 document.getElementById('to-game-menu').onclick = () => showScreen('gameMenu');
 document.getElementById('to-menu').onclick = () => showScreen('menu');
 document.getElementById('to-homework').onclick = () => showHomework();
@@ -259,5 +265,6 @@ playButton.onclick = () => {
     alert('Рикки устал, зайди позже!');
   } else {
     showScreen('gameMenu');
+    sessionStart = Date.now();
   }
 };
