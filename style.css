@@ -1,8 +1,11 @@
+/* Подключение шрифта */
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+
 /* Основные стили */
 body {
     margin: 0;
     padding: 0;
-    font-family: 'Comic Sans MS', 'Quicksand', 'Segoe UI', cursive, sans-serif;
+    font-family: 'Fredoka One', cursive;
     background-color: #ffe6f0;
     color: #333;
     overflow: hidden;
@@ -38,6 +41,19 @@ body {
     height: 100%;
     object-fit: cover;
     transition: opacity 0.5s ease-in-out;
+}
+
+/* Цвета экранов */
+.main-menu {
+    background-color: #fff3e0; /* Бежевый */
+}
+
+.memory-game {
+    background-color: #e3f2fd; /* Светло-голубой */
+}
+
+.bible-puzzles {
+    background-color: #e8f5e9; /* Зелёный */
 }
 
 /* Модальные окна */
@@ -117,6 +133,7 @@ body {
 
 /* Кнопки */
 button {
+    font-family: 'Fredoka One', cursive;
     background: linear-gradient(145deg, #ff99cc, #ff66b2);
     border: none;
     border-radius: 25px;
@@ -317,15 +334,18 @@ input:focus {
     margin: 10px 0;
 }
 
-/* Уведомление о перерыве */
-.break-notification .modal-content {
-    background-color: #ffe6f0;
+/* Кнопки навигации */
+.screen-buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 500px;
 }
 
-.break-notification .modal-image {
-    max-width: 80%;
-    height: auto;
-    margin-bottom: 20px;
+.screen-buttons button {
+    flex: 1;
+    margin: 0 5px;
 }
 
 /* Анимации */
@@ -352,29 +372,11 @@ input:focus {
     100% { transform: scale(1); }
 }
 
-/* Фейерверк */
-#fireworks {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 9999;
-    pointer-events: none;
-    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="url(#grad)"/><defs><radialGradient id="grad"><stop offset="0%" stop-color="yellow"/><stop offset="100%" stop-color="red"/></radialGradient></defs></svg>') no-repeat center center fixed;
-    background-size: cover;
-    opacity: 0;
-    transition: opacity 1s ease-in-out;
-}
-
-#fireworks.active {
-    opacity: 1;
-}
-
 /* Адаптивность */
 @media (max-width: 600px) {
     .menu-buttons,
-    .homework-buttons {
+    .homework-buttons,
+    .screen-buttons {
         flex-direction: column;
     }
     
