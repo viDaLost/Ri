@@ -156,7 +156,6 @@ function initMemoryGame() {
         cards = [];
         firstCard = null;
         secondCard = null;
-        lockBoard = false;
         matchedCount = 0;
         
         pairs.forEach((emoji, index) => {
@@ -283,12 +282,13 @@ function initHomework() {
 
 // Проверка времени сессии
 function checkGameTimer() {
-    let breakUntil = localStorage.getItem('rikkieBreakUntil');
-    let gameStartTime = Date.now();
+    const breakUntil = localStorage.getItem('rikkieBreakUntil');
     
     if (breakUntil && Date.now() < parseInt(breakUntil)) {
         window.location.href = 'break-notification.html';
     }
+    
+    let gameStartTime = Date.now();
     
     setInterval(() => {
         const sessionDuration = Date.now() - gameStartTime;
@@ -336,8 +336,9 @@ function animateOut(element, callback, delay = 0) {
 
 // Инициализация приложения
 document.addEventListener('DOMContentLoaded', async () => {
-    await loadContent();
+    await window.loadContent();
     window.contentData = contentData;
+    window.loadUserData();
     
     // Инициализация текущей страницы
     if (document.querySelector('.main-menu-page')) {
