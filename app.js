@@ -115,7 +115,7 @@ function initMemoryGame() {
     let matchedCount = 0;
 
     function startMemoryGame() {
-        // Смайлики фруктов
+        // Временные смайлики
         const fruits = ['🍎', '🍌', '🍒', '🍇', '🍊', '🍐', '🍓', '🍉'];
         const pairs = [...fruits, ...fruits]; // 8 пар
         
@@ -178,10 +178,12 @@ function initMemoryGame() {
                 winMessage.classList.remove('hidden');
             }
         } else {
-            // Анимация неудачного выбора
+            firstCard.classList.add('mismatch');
+            secondCard.classList.add('mismatch');
+            
             setTimeout(() => {
-                firstCard.classList.remove('flipped');
-                secondCard.classList.remove('flipped');
+                firstCard.classList.remove('flipped', 'mismatch');
+                secondCard.classList.remove('flipped', 'mismatch');
                 resetTurn();
             }, 1000);
         }
