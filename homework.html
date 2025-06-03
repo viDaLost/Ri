@@ -40,7 +40,6 @@
     </div>
 
     <script>
-        let currentPuzzleIndex = 0;
         let homeworkCompleteModal = null;
         
         async function initHomework() {
@@ -76,7 +75,6 @@
             });
         }
         
-        // Инициализация при загрузке
         document.addEventListener('DOMContentLoaded', async () => {
             await window.loadContent();
             window.loadUserData();
