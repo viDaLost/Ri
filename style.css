@@ -222,17 +222,16 @@ button:active {
 .memory-card.mismatch .memory-card-back {
     border-color: #d32f2f !important;
     box-shadow: 0 0 15px rgba(215, 0, 0, 0.5);
-    animation: shake 0.5s;
+    animation: shakeX 0.5s;
 }
 
-@keyframes shake {
-    0% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    50% { transform: translateX(5px); }
-    75% { transform: translateX(-5px); }
-    100% { transform: translateX(0); }
+@keyframes shakeX {
+    0% { transform: rotateY(0deg) translateX(0); }
+    25% { transform: rotateY(0deg) translateX(-5px); }
+    50% { transform: rotateY(0deg) translateX(5px); }
+    75% { transform: rotateY(0deg) translateX(-5px); }
+    100% { transform: rotateY(0deg) translateX(0); }
 }
-
 /* Ввод текста */
 input[type="text"],
 input[type="date"],
