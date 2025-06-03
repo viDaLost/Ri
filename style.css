@@ -149,7 +149,6 @@ button:active {
     50% { transform: scale(1.05); }
     100% { transform: scale(1); }
 }
-
 /* Игра "Найди пару" */
 .memory-grid {
     display: grid;
@@ -181,7 +180,6 @@ button:active {
     justify-content: center;
     align-items: center;
     font-size: 2em;
-    transition: all 0.3s ease;
 }
 
 .memory-card-front {
@@ -189,11 +187,10 @@ button:active {
     color: white;
     border: 3px solid #000000;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    transform: rotateY(0deg); /* Передняя сторона */
 }
 
 .memory-card-back {
-    transform: rotateY(180deg); /* Обратная сторона */
+    transform: rotateY(180deg);
     background-color: #fff;
     border: 3px solid #ff99cc;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
@@ -203,15 +200,19 @@ button:active {
     transform: rotateY(180deg); /* Анимация переворота */
 }
 
-.memory-card.matched .memory-card-front,
-.memory-card.matched .memory-card-back {
+.memory-card.matched .memory-card-front {
     border-color: #00cc66 !important; /* Зелёная обводка */
+    box-shadow: 0 0 15px rgba(102, 187, 106, 0.5);
+}
+
+.memory-card.matched .memory-card-back {
+    border-color: #00cc66 !important;
     box-shadow: 0 0 15px rgba(102, 187, 106, 0.5);
 }
 
 .memory-card.mismatch .memory-card-front,
 .memory-card.mismatch .memory-card-back {
-    border-color: #d32f2f; /* Красная обводка */
+    border-color: #d32f2f !important; /* Красная обводка */
     box-shadow: 0 0 15px rgba(215, 0, 0, 0.5);
     animation: shake 0.5s; /* Анимация тряски */
 }
@@ -223,6 +224,7 @@ button:active {
     75% { transform: translateX(-5px); }
     100% { transform: translateX(0); }
 }
+
 
 /* Ввод текста */
 input[type="text"],
