@@ -158,14 +158,35 @@ button:active {
 }
 
 /* Игра "Найди пару" */
+body {
+    font-family: 'Neucha', cursive;
+    margin: 0;
+    background-color: #fce4ec;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.app {
+    width: 100%;
+    max-width: 500px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+h2 {
+    text-align: center;
+    color: #d81b60;
+}
+
 .memory-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
     gap: 10px;
     width: 100%;
     max-width: 400px;
-    margin-top: 20px;
-    margin-bottom: 20px;
+    margin: 20px auto;
     perspective: 1000px;
 }
 
@@ -182,6 +203,8 @@ button:active {
 .memory-card-front,
 .memory-card-back {
     position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     backface-visibility: hidden;
@@ -191,6 +214,7 @@ button:active {
     align-items: center;
     font-size: 2em;
     user-select: none;
+    transition: left 0.1s;
 }
 
 .memory-card-front {
@@ -211,26 +235,74 @@ button:active {
     transform: rotateY(180deg);
 }
 
+/* Победа */
+#winMessage {
+    text-align: center;
+    font-size: 1.2em;
+    color: #4caf50;
+}
+
+/* Совпадение */
 .memory-card.matched .memory-card-front,
 .memory-card.matched .memory-card-back {
     border-color: #00cc66 !important;
     box-shadow: 0 0 15px rgba(102, 187, 106, 0.5);
-    animation: none;
 }
 
+/* Несовпадение — безопасная анимация через left */
 .memory-card.mismatch .memory-card-front,
 .memory-card.mismatch .memory-card-back {
+    animation: shake 0.5s;
     border-color: #d32f2f !important;
     box-shadow: 0 0 15px rgba(215, 0, 0, 0.5);
-    animation: shakeX 0.5s;
 }
 
-@keyframes shakeX {
-    0% { transform: rotateY(0deg) translateX(0); }
-    25% { transform: rotateY(0deg) translateX(-5px); }
-    50% { transform: rotateY(0deg) translateX(5px); }
-    75% { transform: rotateY(0deg) translateX(-5px); }
-    100% { transform: rotateY(0deg) translateX(0); }
+@keyframes shake {
+    0% { left: 0; }
+    25% { left: -5px; }
+    50% { left: 5px; }
+    75% { left: -5px; }
+    100% { left: 0; }
+}
+
+.character-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.character {
+    max-width: 100px;
+    height: auto;
+}
+
+.screen-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+button {
+    font-family: 'Neucha', cursive;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+.blue-btn {
+    background-color: #2196f3;
+    color: white;
+}
+
+.green-btn {
+    background-color: #4caf50;
+    color: white;
+}
+
+.hidden {
+    display: none;
 }
 /* Ввод текста */
 input[type="text"],
