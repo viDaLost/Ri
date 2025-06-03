@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-0">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Рикки: Детская Библия</title>
     <link href="https://fonts.googleapis.com/css2?family=Neucha&display=swap" rel="stylesheet">
@@ -21,11 +21,17 @@
     </div>
 
     <script>
+        // Проверка, есть ли уже сохранённые данные
+        const savedUserData = localStorage.getItem('rikkieUserData');
+        if (savedUserData) {
+            window.location.href = 'main-menu.html';
+        }
+
         // Сохранение данных пользователя
         document.getElementById('confirmBtn').addEventListener('click', () => {
             const name = document.getElementById('username').value.trim();
             const birthdate = document.getElementById('birthdate').value;
-            
+
             if (name && birthdate) {
                 localStorage.setItem('rikkieUserData', JSON.stringify({ name, birthdate }));
                 window.location.href = 'main-menu.html';
