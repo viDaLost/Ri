@@ -130,7 +130,7 @@ function initMemoryGame() {
         pairs.forEach((emoji, index) => {
             const card = document.createElement('div');
             card.classList.add('memory-card');
-            card.dataset.pairId = index % 8 + 1;
+            card.dataset.pairId = emoji; // теперь используется сам emoji как ID
             
             const front = document.createElement('div');
             front.classList.add('memory-card-front');
@@ -171,16 +171,17 @@ function initMemoryGame() {
         if (isMatch) {
             firstCard.classList.add('matched');
             secondCard.classList.add('matched');
+            // оставляем flipped, не убираем
             matchedCount += 2;
             resetTurn();
-            
+
             if (matchedCount === cards.length) {
                 winMessage.classList.remove('hidden');
             }
         } else {
             firstCard.classList.add('mismatch');
             secondCard.classList.add('mismatch');
-            
+
             setTimeout(() => {
                 firstCard.classList.remove('flipped', 'mismatch');
                 secondCard.classList.remove('flipped', 'mismatch');
