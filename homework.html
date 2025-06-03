@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Рикки: Домашнее задание</title>
-    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Neucha&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="homework-page">
@@ -46,7 +46,7 @@
             const homeworkText = document.getElementById('homeworkText');
             homeworkText.textContent = window.contentData.homework.default;
             
-            // Создание модального окна
+            // Инициализация модального окна
             homeworkCompleteModal = document.getElementById('homeworkCompleteModal');
             document.getElementById('closeHomeworkModalBtn').addEventListener('click', () => {
                 homeworkCompleteModal.classList.remove('active');
