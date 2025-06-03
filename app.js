@@ -41,24 +41,12 @@ async function loadContent() {
             puzzles: puzzles
         };
     } catch (error) {
-        console.warn('Используется резервный контент:', error);
+        console.warn('Использован резервный контент:', error);
     }
 }
 
 // Инициализация главного меню
 function initMainMenu() {
-    const userData = JSON.parse(localStorage.getItem('rikkieUserData'));
-    if (!userData) {
-        window.location.href = 'index.html';
-        return;
-    }
-    
-    loadUserData();
-    checkGameTimer();
-}
-
-// Инициализация экрана выбора игры
-function initChooseGame() {
     const userData = JSON.parse(localStorage.getItem('rikkieUserData'));
     if (!userData) {
         window.location.href = 'index.html';
@@ -83,9 +71,6 @@ function initBiblePuzzles() {
     const currentPuzzle = document.getElementById('currentPuzzle');
     const answerInput = document.getElementById('answerInput');
     const checkAnswerBtn = document.getElementById('checkAnswerBtn');
-    const answerFeedback = document.getElementById('answerFeedback');
-    const feedbackText = document.getElementById('feedbackText');
-    const nextPuzzleBtn = document.getElementById('nextPuzzleBtn');
     
     let currentPuzzleIndex = 0;
     let currentPuzzleAnswer = "";
@@ -99,7 +84,6 @@ function initBiblePuzzles() {
         currentPuzzle.textContent = puzzle.question;
         currentPuzzleAnswer = puzzle.answer.toLowerCase();
         answerInput.value = '';
-        answerFeedback.classList.add('hidden');
     }
     
     startPuzzleGame();
@@ -108,25 +92,29 @@ function initBiblePuzzles() {
         const userAnswer = answerInput.value.trim().toLowerCase();
         
         if (userAnswer === currentPuzzleAnswer) {
-            feedbackText.textContent = "Молодец!";
-            answerFeedback.classList.remove('hidden');
+            const feedback = document.getElementById('currentPuzzle');
+            feedback.textContent = "Молодец!";
+            feedback.style.color = "#388e3c";
+            
+            setTimeout(() => {
+                currentPuzzleIndex++;
+                if (currentPuzzleIndex < contentData.puzzles.length) {
+                    startPuzzleGame();
+                    feedback.style.color = "#333";
+                } else {
+                    feedback.textContent = "Вы прошли все загадки! Молодец!";
+                    window.location.href = 'choose-game.html';
+                }
+            }, 1500);
         } else {
-            feedbackText.textContent = "Попробуй еще раз!";
-            answerFeedback.classList.remove('hidden');
-        }
-    });
-    
-    nextPuzzleBtn.addEventListener('click', () => {
-        currentPuzzleIndex++;
-        if (currentPuzzleIndex < contentData.puzzles.length) {
-            startPuzzleGame();
-        } else {
-            currentPuzzle.textContent = "Вы прошли все загадки! Молодец!";
-            answerFeedback.classList.add('hidden');
-            nextPuzzleBtn.textContent = "Вернуться к выбору игры";
-            nextPuzzleBtn.onclick = () => {
-                window.location.href = 'choose-game.html';
-            };
+            const feedback = document.getElementById('currentPuzzle');
+            feedback.textContent = "Попробуй еще раз!";
+            feedback.style.color = "#d32f2f";
+            
+            setTimeout(() => {
+                feedback.textContent = contentData.puzzles[currentPuzzleIndex].question;
+                feedback.style.color = "#333";
+            }, 1500);
         }
     });
 }
@@ -152,9 +140,9 @@ function initMemoryGame() {
     let matchedCount = 0;
     
     function startMemoryGame() {
-        // Временные смайлики вместо изображений
-        const emojis = ['😊', '😎', '😂', '🤣', '😍', '🥳', '😇', '🥰'];
-        const pairs = [...emojis, ...emojis];
+        // Временные изображения
+        const fruits = ['🍎', '🍌', '🍒', '🍇', '🍊', '🍐', '🍓', '🍉'];
+        const pairs = [...fruits, ...fruits, ...fruits, ...fruits]; // 8 пар по 2 = 16 карточек (4x5)
         
         shuffle(pairs);
         
@@ -213,16 +201,16 @@ function initMemoryGame() {
             
             if (matchedCount === cards.length) {
                 winMessage.classList.remove('hidden');
-                setTimeout(() => {
-                    window.location.href = 'choose-game.html';
-                }, 3000);
             }
         } else {
+            firstCard.classList.add('mismatch');
+            secondCard.classList.add('mismatch');
+            
             setTimeout(() => {
-                firstCard.classList.remove('flipped');
-                secondCard.classList.remove('flipped');
+                firstCard.classList.remove('flipped', 'mismatch');
+                secondCard.classList.remove('flipped', 'mismatch');
                 resetTurn();
-            }, 1000);
+            }, 500);
         }
     }
     
@@ -255,18 +243,6 @@ function initHomework() {
     const homeworkText = document.getElementById('homeworkText');
     homeworkText.textContent = contentData.homework.default;
     
-    const homeworkCompleteModal = document.getElementById('homeworkCompleteModal');
-    const closeHomeworkModalBtn = document.getElementById('closeHomeworkModalBtn');
-    
-    document.getElementById('doneBtn').addEventListener('click', () => {
-        homeworkCompleteModal.classList.add('active');
-    });
-    
-    closeHomeworkModalBtn.addEventListener('click', () => {
-        homeworkCompleteModal.classList.remove('active');
-        window.location.href = 'main-menu.html';
-    });
-    
     document.getElementById('remindBtn').addEventListener('click', () => {
         document.getElementById('reminderInput').classList.toggle('hidden');
     });
@@ -281,6 +257,10 @@ function initHomework() {
         } else {
             alert('Выберите дату и время напоминания');
         }
+    });
+    
+    document.getElementById('doneBtn').addEventListener('click', () => {
+        window.location.href = 'homework-complete.html';
     });
 }
 
@@ -320,30 +300,11 @@ function checkReminders() {
 
 setInterval(checkReminders, 300000);
 
-// Анимации
-function animateIn(element, delay = 0) {
-    setTimeout(() => {
-        element.style.opacity = '1';
-        element.style.transform = 'scale(1)';
-    }, delay);
-}
-
-function animateOut(element, callback, delay = 0) {
-    element.style.opacity = '0';
-    element.style.transform = 'scale(0.9)';
-    
-    setTimeout(() => {
-        element.classList.add('hidden');
-        if (callback) callback();
-    }, delay);
-}
-
 // Инициализация приложения
 document.addEventListener('DOMContentLoaded', async () => {
     await loadContent();
     window.contentData = contentData;
     
-    // Инициализация текущей страницы
     if (document.querySelector('.main-menu-page')) {
         initMainMenu();
     } else if (document.querySelector('.choose-game-page')) {
