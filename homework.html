@@ -13,32 +13,33 @@
             <div class="game-header">
                 <h2>Домашнее задание</h2>
             </div>
-            <div class="homework-content">
-                <p id="homeworkText"></p>
-                <div class="homework-buttons">
-                    <button id="doneBtn" class="yellow-btn">Выполнено</button>
-                    <button id="remindBtn" class="green-btn">Напомнить позже</button>
+            <div class="game-content">
+                <div class="character-container">
+                    <img src="img/choose-character.png" alt="Рикки задумался" class="character">
                 </div>
-                <div id="reminderInput" class="hidden">
-                    <label for="reminderTime">Выберите время напоминания:</label>
-                    <input type="datetime-local" id="reminderTime">
-                    <button id="setReminderBtn" class="green-btn">Подтвердить</button>
-                </div>
-                <div class="screen-buttons">
-                    <button class="blue-btn" onclick="window.location.href='main-menu.html'">Главное меню</button>
+                <div class="homework-content">
+                    <p id="homeworkText"></p>
+                    <div class="homework-buttons">
+                        <button id="remindBtn" class="green-btn">Напомнить позже</button>
+                    </div>
+                    <div id="reminderInput" class="hidden">
+                        <label for="reminderTime">Выберите время напоминания:</label>
+                        <input type="datetime-local" id="reminderTime">
+                        <button id="setReminderBtn" class="green-btn">Подтвердить</button>
+                    </div>
+                    <div id="reminderConfirmation" class="hidden">
+                        <p>Напоминание задано</p>
+                        <button id="okReminderBtn" class="blue-btn">Окей</button>
+                    </div>
+                    <div class="screen-buttons">
+                        <button class="blue-btn" onclick="window.location.href='main-menu.html'">Главное меню</button>
+                        <button class="green-btn" onclick="window.location.href='choose-game.html'">К выбору игры</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const homeworkCompleteModal = document.getElementById('homeworkCompleteModal');
-            document.getElementById('closeHomeworkModalBtn').addEventListener('click', () => {
-                homeworkCompleteModal.classList.remove('active');
-                window.location.href = 'main-menu.html';
-            });
-        });
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>
