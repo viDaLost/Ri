@@ -1,7 +1,7 @@
 /* Подключение шрифта */
 @import url('https://fonts.googleapis.com/css2?family=Neucha&display=swap');
 
-/* Общие стили */
+/* Основные стили */
 body {
     margin: 0;
     padding: 0;
@@ -23,69 +23,12 @@ body {
 }
 
 /* Цвета экранов */
-.bible-puzzles-page .app {
-    background-color: #e8f5e9; /* Зелёный */
+.welcome-page .app {
+    background-color: #fff3e0; /* Бежевый фон */
 }
 
 .memory-game-page .app {
-    background-color: #fff3e0; /* Бежевый */
-}
-
-.homework-page .app {
-    background-color: #fffde7; /* Светло-жёлтый */
-}
-
-.choose-game-page .app {
-    background-color: #fff8e1; /* Тёплый пастельный */
-}
-
-/* Фоновое изображение главного меню */
-.backgrounds {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-}
-
-.backgrounds img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-/* Экраны */
-.screen {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    display: none;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    box-sizing: border-box;
-    z-index: 2;
-}
-
-.screen.active {
-    display: flex;
-}
-
-.character-container {
-    position: relative;
-    width: 100%;
-    max-width: 300px;
-    margin-bottom: 20px;
-}
-
-.character {
-    width: 100%;
-    height: auto;
+    background-color: #fff3e0; /* Бежевый фон */
 }
 
 /* Кнопки */
@@ -115,6 +58,7 @@ button:active {
     transform: scale(0.95);
 }
 
+/* Цвета кнопок */
 .green-btn {
     background: linear-gradient(145deg, #66bb6a, #388e3c);
     border: 2px solid #388e3c;
@@ -149,24 +93,27 @@ button:active {
     50% { transform: scale(1.05); }
     100% { transform: scale(1); }
 }
+
 /* Игра "Найди пару" */
 .memory-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4 столбца */
+    grid-template-columns: repeat(4, 1fr);
     gap: 15px;
     width: 100%;
     max-width: 400px;
     margin-top: 20px;
-    perspective: 1000px; /* Для 3D-анимации */
+    perspective: 1000px;
 }
 
 .memory-card {
     width: 80px;
     height: 80px;
     position: relative;
-    transform-style: preserve-3d; /* Сохраняет 3D-стиль */
-    transition: transform 0.5s; /* Анимация поворота */
+    transform-style: preserve-3d;
+    transition: transform 0.5s;
     cursor: pointer;
+    border: 3px solid transparent;
+    background-color: transparent;
 }
 
 .memory-card-front,
@@ -174,12 +121,13 @@ button:active {
     position: absolute;
     width: 100%;
     height: 100%;
-    backface-visibility: hidden; /* Скрывает обратную сторону */
+    backface-visibility: hidden;
     border-radius: 15px;
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 2em;
+    user-select: none;
 }
 
 .memory-card-front {
@@ -197,24 +145,21 @@ button:active {
 }
 
 .memory-card.flipped {
-    transform: rotateY(180deg); /* Анимация переворота */
+    transform: rotateY(180deg);
 }
 
-.memory-card.matched .memory-card-front {
-    border-color: #00cc66 !important; /* Зелёная обводка */
-    box-shadow: 0 0 15px rgba(102, 187, 106, 0.5);
-}
-
+.memory-card.matched .memory-card-front,
 .memory-card.matched .memory-card-back {
     border-color: #00cc66 !important;
     box-shadow: 0 0 15px rgba(102, 187, 106, 0.5);
+    animation: shake 0.5s;
 }
 
 .memory-card.mismatch .memory-card-front,
 .memory-card.mismatch .memory-card-back {
-    border-color: #d32f2f !important; /* Красная обводка */
+    border-color: #d32f2f !important;
     box-shadow: 0 0 15px rgba(215, 0, 0, 0.5);
-    animation: shake 0.5s; /* Анимация тряски */
+    animation: shake 0.5s;
 }
 
 @keyframes shake {
@@ -224,7 +169,6 @@ button:active {
     75% { transform: translateX(-5px); }
     100% { transform: translateX(0); }
 }
-
 
 /* Ввод текста */
 input[type="text"],
@@ -237,8 +181,6 @@ input[type="datetime-local"] {
     border: 2px solid #ccc;
     font-size: 1.1em;
     transition: all 0.3s ease;
-    z-index: 2;
-    position: relative;
 }
 
 input:focus {
@@ -263,4 +205,17 @@ input:focus {
 .greeting-box span {
     font-weight: bold;
     color: #388e3c;
+}
+
+/* Адаптивность */
+@media (max-width: 600px) {
+    .menu-buttons,
+    .homework-buttons,
+    .screen-buttons {
+        flex-direction: column;
+    }
+    
+    button {
+        font-size: 1em;
+    }
 }
