@@ -3,23 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Рикки: Найди пару</title>
+    <title>Рикки: Библейские загадки</title>
     <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="memory-game-page">
+<body class="bible-puzzles-page">
     <div class="app">
-        <div class="screen memory-game active">
+        <div class="screen bible-puzzles active">
             <div class="game-header">
-                <h2>Найди пару</h2>
+                <h2>Библейские загадки</h2>
             </div>
             <div class="game-content">
                 <div class="character-container">
-                    <img src="img/memory-character.png" alt="Рикки задумался" class="character">
+                    <img src="img/puzzle-character.png" alt="Рикки задумался" class="character">
                 </div>
-                <div class="memory-grid" id="memoryGrid"></div>
-                <div id="winMessage" class="hidden">
-                    <p>Поздравляем! Ты нашел все пары!</p>
+                <div class="puzzle-box">
+                    <p id="currentPuzzle">Загадка</p>
+                    <input type="text" id="answerInput" placeholder="Ваш ответ">
+                    <button id="checkAnswerBtn" class="green-btn">Ответить</button>
+                    <div id="answerFeedback" class="hidden">
+                        <p id="feedbackText">Молодец!</p>
+                        <button id="nextPuzzleBtn" class="green-btn">Следующая загадка</button>
+                    </div>
                 </div>
                 <div class="screen-buttons">
                     <button class="blue-btn" onclick="window.location.href='main-menu.html'">Главное меню</button>
@@ -29,117 +34,64 @@
     </div>
 
     <script>
-        let cards = [];
-        let firstCard = null;
-        let secondCard = null;
-        let lockBoard = false;
-        let matchedCount = 0;
+        let currentPuzzleIndex = 0;
+        let currentPuzzleAnswer = "";
         
-        function initMemoryGame() {
-            const memoryGrid = document.getElementById('memoryGrid');
-            const winMessage = document.getElementById('winMessage');
+        function initBiblePuzzles() {
+            const currentPuzzle = document.getElementById('currentPuzzle');
+            const answerInput = document.getElementById('answerInput');
+            const checkAnswerBtn = document.getElementById('checkAnswerBtn');
+            const answerFeedback = document.getElementById('answerFeedback');
+            const feedbackText = document.getElementById('feedbackText');
+            const nextPuzzleBtn = document.getElementById('nextPuzzleBtn');
             
-            function startMemoryGame() {
-                memoryGrid.innerHTML = '';
-                cards = [];
-                firstCard = null;
-                secondCard = null;
-                lockBoard = false;
-                matchedCount = 0;
-                
-                const pairs = [];
-                for (let i = 1; i <= 8; i++) {
-                    pairs.push(i, i);
+            function startPuzzleGame() {
+                if (currentPuzzleIndex >= window.contentData.puzzles.length) {
+                    currentPuzzleIndex = 0;
                 }
                 
-                shuffle(pairs);
-                
-                pairs.forEach((pairId, index) => {
-                    const card = document.createElement('div');
-                    card.classList.add('memory-card');
-                    card.dataset.pairId = pairId;
-                    
-                    const front = document.createElement('div');
-                    front.classList.add('memory-card-front');
-                    front.textContent = '❓';
-                    
-                    const back = document.createElement('div');
-                    back.classList.add('memory-card-back');
-                    
-                    const img = document.createElement('img');
-                    img.src = `img/puzzle-pieces/piece${pairId}.png`;
-                    img.alt = `Пазл ${pairId}`;
-                    
-                    back.appendChild(img);
-                    card.appendChild(front);
-                    card.appendChild(back);
-                    card.addEventListener('click', flipCard);
-                    memoryGrid.appendChild(card);
-                    cards.push(card);
-                });
+                const puzzle = window.contentData.puzzles[currentPuzzleIndex];
+                currentPuzzle.textContent = puzzle.question;
+                currentPuzzleAnswer = puzzle.answer.toLowerCase();
+                answerInput.value = '';
+                answerFeedback.classList.add('hidden');
             }
             
-            function flipCard() {
-                if (lockBoard || this.classList.contains('flipped') || this.classList.contains('matched')) return;
-                
-                this.classList.add('flipped');
-                
-                if (!firstCard) {
-                    firstCard = this;
-                    return;
-                }
-                
-                secondCard = this;
-                lockBoard = true;
-                
-                checkForMatch();
-            }
+            startPuzzleGame();
             
-            function checkForMatch() {
-                const isMatch = firstCard.dataset.pairId === secondCard.dataset.pairId;
+            checkAnswerBtn.addEventListener('click', () => {
+                const userAnswer = answerInput.value.trim().toLowerCase();
                 
-                if (isMatch) {
-                    firstCard.classList.add('matched');
-                    secondCard.classList.add('matched');
-                    matchedCount += 2;
-                    resetTurn();
-                    
-                    if (matchedCount === cards.length) {
-                        winMessage.classList.remove('hidden');
-                        setTimeout(() => {
-                            window.location.href = 'choose-game.html';
-                        }, 3000);
-                    }
+                if (userAnswer === currentPuzzleAnswer) {
+                    feedbackText.textContent = "Молодец!";
+                    answerFeedback.classList.remove('hidden');
                 } else {
-                    setTimeout(() => {
-                        firstCard.classList.remove('flipped');
-                        secondCard.classList.remove('flipped');
-                        resetTurn();
-                    }, 1000);
+                    feedbackText.textContent = "Попробуй еще раз!";
+                    answerFeedback.classList.remove('hidden');
                 }
-            }
+            });
             
-            function resetTurn() {
-                [firstCard, secondCard] = [null, null];
-                lockBoard = false;
-            }
-            
-            function shuffle(array) {
-                for (let i = array.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [array[i], array[j]] = [array[j], array[i]];
+            nextPuzzleBtn.addEventListener('click', () => {
+                currentPuzzleIndex++;
+                if (currentPuzzleIndex < window.contentData.puzzles.length) {
+                    startPuzzleGame();
+                } else {
+                    currentPuzzle.textContent = "Вы прошли все загадки! Молодец!";
+                    answerFeedback.classList.add('hidden');
+                    nextPuzzleBtn.textContent = "Вернуться к выбору игры";
+                    nextPuzzleBtn.onclick = () => {
+                        window.location.href = 'choose-game.html';
+                    };
                 }
-            }
-            
-            startMemoryGame();
+            });
         }
         
         document.addEventListener('DOMContentLoaded', async () => {
             await window.loadContent();
             window.loadUserData();
             
-            if (document.querySelector('.memory-game-page')) {
-                initMemoryGame();
+            if (document.querySelector('.bible-puzzles-page')) {
+                initBiblePuzzles();
             }
         });
     </script>
