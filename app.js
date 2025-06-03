@@ -100,27 +100,24 @@ function initHomework() {
 // Инициализация игры "Найди пару"
 function initMemoryGame() {
     const userData = JSON.parse(localStorage.getItem('rikkieUserData'));
-    if (!userData) {
-        window.location.href = 'index.html';
-        return;
-    }
+    if (!userData) window.location.href = 'index.html';
     
     loadUserData();
     checkGameTimer();
-    
+
     const memoryGrid = document.getElementById('memoryGrid');
     const winMessage = document.getElementById('winMessage');
-    
+
     let cards = [];
     let firstCard = null;
     let secondCard = null;
     let lockBoard = false;
     let matchedCount = 0;
-    
+
     function startMemoryGame() {
         // Временные смайлики вместо изображений
-        const fruits = ['🍎', '🍌', '🍒', '🍇', '🍊', '🍐', '🍓', '🍉'];
-        const pairs = [...fruits, ...fruits];
+        const emojis = ['😊', '😎', '😂', '🤣', '😍', '🥳', '😇', '🥰'];
+        const pairs = [...emojis, ...emojis]; // 8 пар по 2 изображения
         
         shuffle(pairs);
         
@@ -188,7 +185,7 @@ function initMemoryGame() {
                 firstCard.classList.remove('flipped', 'mismatch');
                 secondCard.classList.remove('flipped', 'mismatch');
                 resetTurn();
-            }, 1000);
+            }, 1000); // Время красной обводки
         }
     }
     
