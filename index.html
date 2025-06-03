@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-0">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Рикки: Детская Библия</title>
     <link href="https://fonts.googleapis.com/css2?family=Neucha&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -21,7 +21,13 @@
     </div>
 
     <script>
-        // Сохранение данных пользователя
+        // Проверка данных пользователя
+        const userData = localStorage.getItem('rikkieUserData');
+        if (userData) {
+            window.location.href = 'main-menu.html';
+        }
+
+        // Сохранение данных
         document.getElementById('confirmBtn').addEventListener('click', () => {
             const name = document.getElementById('username').value.trim();
             const birthdate = document.getElementById('birthdate').value;
