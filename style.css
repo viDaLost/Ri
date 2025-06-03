@@ -32,7 +32,30 @@ body {
 }
 
 .homework-page .app {
-    background-color: #fffde7; /* Светло-желтый */
+    background-color: #fffde7; /* Светло-жёлтый */
+}
+
+.choose-game-page .app {
+    background-color: #fff8e1; /* Тёплый пастельный */
+}
+
+/* Фоновое изображение главного меню */
+.backgrounds {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+.backgrounds img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 /* Модальные окна */
@@ -78,6 +101,7 @@ body {
     align-items: center;
     padding: 20px;
     box-sizing: border-box;
+    z-index: 2;
 }
 
 .screen.active {
@@ -86,6 +110,7 @@ body {
 
 /* Кнопки */
 button {
+    font-family: 'Luckiest Guy', cursive;
     border: none;
     border-radius: 25px;
     padding: 15px 25px;
@@ -97,6 +122,8 @@ button {
     transition: all 0.3s ease;
     cursor: pointer;
     animation: pulse 2s infinite;
+    position: relative;
+    z-index: 3;
 }
 
 button:hover {
@@ -110,47 +137,43 @@ button:active {
 
 /* Цвета кнопок */
 .green-btn {
-    background: none;
+    background: linear-gradient(145deg, #66bb6a, #388e3c);
     border: 2px solid #388e3c;
 }
 
 .green-btn:hover {
-    background: rgba(56, 142, 60, 0.1);
+    box-shadow: 0 12px 20px rgba(56, 142, 60, 0.3);
 }
 
 .orange-btn {
-    background: none;
+    background: linear-gradient(145deg, #ffa726, #f57c00);
     border: 2px solid #f57c00;
 }
 
 .orange-btn:hover {
-    background: rgba(245, 125, 0, 0.1);
+    box-shadow: 0 12px 20px rgba(245, 125, 0, 0.3);
 }
 
 .blue-btn {
-    background: none;
+    background: linear-gradient(145deg, #42a5f5, #1565c0);
     border: 2px solid #1565c0;
 }
 
 .blue-btn:hover {
-    background: rgba(21, 101, 192, 0.1);
+    box-shadow: 0 12px 20px rgba(21, 101, 192, 0.3);
 }
 
 .yellow-btn {
-    background: none;
+    background: linear-gradient(145deg, #ffeb3b, #fbc02d);
     border: 2px solid #fbc02d;
     color: #333;
 }
 
 .yellow-btn:hover {
-    background: rgba(251, 193, 45, 0.1);
+    box-shadow: 0 12px 20px rgba(251, 193, 45, 0.3);
 }
 
 /* Анимации */
-.hidden {
-    display: none;
-}
-
 .pulse {
     animation: pulse 2s infinite;
 }
@@ -172,6 +195,8 @@ input[type="datetime-local"] {
     border: 2px solid #ccc;
     font-size: 1.1em;
     transition: all 0.3s ease;
+    z-index: 2;
+    position: relative;
 }
 
 input:focus {
