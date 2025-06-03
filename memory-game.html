@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Рикки: Найди пару</title>
-    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Neucha&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="memory-game-page">
@@ -19,10 +19,15 @@
                 </div>
                 <div class="memory-grid" id="memoryGrid"></div>
                 <div id="winMessage" class="hidden">
-                    <p>Поздравляем! Ты нашел все пары!</p>
+                    <p>Ты большой молодец! Попробуем ещё раз?</p>
+                    <div class="modal-buttons">
+                        <button class="blue-btn" onclick="window.location.href='main-menu.html'">Главное меню</button>
+                        <button class="green-btn" onclick="location.reload()">Ещё раз</button>
+                    </div>
                 </div>
                 <div class="screen-buttons">
                     <button class="blue-btn" onclick="window.location.href='main-menu.html'">Главное меню</button>
+                    <button class="green-btn" onclick="window.location.href='choose-game.html'">К выбору игры</button>
                 </div>
             </div>
         </div>
