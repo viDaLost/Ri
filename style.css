@@ -20,14 +20,14 @@ body {
     align-items: center;
     padding: 20px;
     box-sizing: border-box;
-    overflow: auto; /* Разрешаем скролл */
+    overflow: auto;
 }
 
 /* Цвета экранов */
 .main-menu-page .app {
     background: url('../img/main-bg.jpg') no-repeat center center fixed;
     background-size: cover;
-    background-color: #fff3e0; /* Резервный цвет */
+    background-color: #fff3e0;
 }
 
 .choose-game-page .app,
@@ -37,7 +37,7 @@ body {
     background-color: #f0f0f0;
 }
 
-/* Фоновое изображение главного меню */
+/* Фоновое изображение */
 .backgrounds {
     position: fixed;
     top: 0;
@@ -86,6 +86,12 @@ body {
 .character {
     width: 100%;
     height: auto;
+    max-width: 300px;
+    margin-bottom: 20px;
+}
+
+.character-container {
+    width: 100%;
     max-width: 300px;
     margin-bottom: 20px;
 }
@@ -154,14 +160,13 @@ button:active {
 /* Игра "Найди пару" */
 .memory-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
     gap: 10px;
     width: 100%;
     max-width: 400px;
     margin-top: 20px;
     margin-bottom: 20px;
     perspective: 1000px;
-    z-index: 3;
 }
 
 .memory-card {
@@ -193,7 +198,6 @@ button:active {
     color: white;
     border: 3px solid #000000;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    transform: rotateY(0deg);
 }
 
 .memory-card-back {
@@ -227,6 +231,43 @@ button:active {
     50% { transform: translateX(5px); }
     75% { transform: translateX(-5px); }
     100% { transform: translateX(0); }
+}
+
+/* Ввод текста */
+input[type="text"],
+input[type="date"],
+input[type="datetime-local"] {
+    width: 100%;
+    padding: 12px;
+    margin: 15px 0;
+    border-radius: 20px;
+    border: 2px solid #ccc;
+    font-size: 1.1em;
+    transition: all 0.3s ease;
+}
+
+input:focus {
+    outline: none;
+    border-color: #80deea;
+    box-shadow: 0 0 8px rgba(128, 222, 234, 0.5);
+}
+
+/* Приветствие в главном меню */
+.greeting-box {
+    background-color: rgba(255, 250, 250, 0.8);
+    border-radius: 25px;
+    padding: 20px;
+    max-width: 80%;
+    text-align: center;
+    font-size: 1.2em;
+    color: #333;
+    margin: 20px 0;
+    z-index: 3;
+}
+
+.greeting-box span {
+    font-weight: bold;
+    color: #388e3c;
 }
 
 /* Адаптивность */
