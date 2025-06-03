@@ -20,40 +20,7 @@ body {
     align-items: center;
     padding: 20px;
     box-sizing: border-box;
-    overflow: auto;
-}
-
-/* Цвета экранов */
-.main-menu-page .app {
-    background: url('../img/main-bg.jpg') no-repeat center center fixed;
-    background-size: cover;
-    background-color: #fff3e0;
-}
-
-.choose-game-page .app,
-.memory-game-page .app,
-.homework-page .app,
-.bible-puzzles-page .app {
-    background-color: #f0f0f0;
-}
-
-/* Фоновое изображение */
-.backgrounds {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-}
-
-.backgrounds img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    overflow: auto; /* Разрешаем скролл в случае переполнения */
 }
 
 /* Экраны */
@@ -86,12 +53,6 @@ body {
 .character {
     width: 100%;
     height: auto;
-    max-width: 300px;
-    margin-bottom: 20px;
-}
-
-.character-container {
-    width: 100%;
     max-width: 300px;
     margin-bottom: 20px;
 }
@@ -160,18 +121,19 @@ button:active {
 /* Игра "Найди пару" */
 .memory-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)); /* Автоматическая адаптация */
     gap: 10px;
     width: 100%;
-    max-width: 400px;
+    max-width: 90%;
     margin-top: 20px;
     margin-bottom: 20px;
     perspective: 1000px;
+    z-index: 3;
 }
 
 .memory-card {
-    width: 80px;
-    height: 80px;
+    width: 60px;
+    height: 60px;
     position: relative;
     transform-style: preserve-3d;
     transition: transform 0.5s;
@@ -189,21 +151,21 @@ button:active {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 2em;
+    font-size: 1.5em;
     user-select: none;
 }
 
 .memory-card-front {
     background-color: #000000;
     color: white;
-    border: 3px solid #000000;
+    border: 2px solid #000000;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 }
 
 .memory-card-back {
     transform: rotateY(180deg);
     background-color: #fff;
-    border: 3px solid #ff99cc;
+    border: 2px solid #ff99cc;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -215,7 +177,6 @@ button:active {
 .memory-card.matched .memory-card-back {
     border-color: #00cc66 !important;
     box-shadow: 0 0 15px rgba(102, 187, 106, 0.5);
-    animation: none;
 }
 
 .memory-card.mismatch .memory-card-front,
@@ -233,45 +194,19 @@ button:active {
     100% { transform: translateX(0); }
 }
 
-/* Ввод текста */
-input[type="text"],
-input[type="date"],
-input[type="datetime-local"] {
-    width: 100%;
-    padding: 12px;
-    margin: 15px 0;
-    border-radius: 20px;
-    border: 2px solid #ccc;
-    font-size: 1.1em;
-    transition: all 0.3s ease;
-}
-
-input:focus {
-    outline: none;
-    border-color: #80deea;
-    box-shadow: 0 0 8px rgba(128, 222, 234, 0.5);
-}
-
-/* Приветствие в главном меню */
-.greeting-box {
-    background-color: rgba(255, 250, 250, 0.8);
-    border-radius: 25px;
-    padding: 20px;
-    max-width: 80%;
-    text-align: center;
-    font-size: 1.2em;
-    color: #333;
-    margin: 20px 0;
-    z-index: 3;
-}
-
-.greeting-box span {
-    font-weight: bold;
-    color: #388e3c;
-}
-
 /* Адаптивность */
 @media (max-width: 600px) {
+    .memory-grid {
+        max-width: 90%;
+        gap: 8px;
+    }
+    
+    .memory-card {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2em;
+    }
+    
     .menu-buttons,
     .screen-buttons,
     .homework-buttons {
@@ -281,7 +216,7 @@ input:focus {
     button {
         font-size: 1em;
         width: 90%;
-        max-width: 300px;
+        max-width: 250px;
     }
     
     .character-container {
@@ -290,10 +225,6 @@ input:focus {
     
     .greeting-box {
         font-size: 1em;
-        max-width: 90%;
-    }
-    
-    .memory-grid {
         max-width: 90%;
     }
     
