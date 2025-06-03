@@ -115,7 +115,6 @@ function initMemoryGame() {
     let matchedCount = 0;
 
     function startMemoryGame() {
-        // Временные смайлики
         const fruits = ['🍎', '🍌', '🍒', '🍇', '🍊', '🍐', '🍓', '🍉'];
         const pairs = [...fruits, ...fruits]; // 8 пар
         
@@ -127,10 +126,10 @@ function initMemoryGame() {
         secondCard = null;
         matchedCount = 0;
         
-        pairs.forEach((emoji, index) => {
+        pairs.forEach((emoji) => {
             const card = document.createElement('div');
             card.classList.add('memory-card');
-            card.dataset.pairId = emoji; // теперь используется сам emoji как ID
+            card.dataset.pairId = emoji;
             
             const front = document.createElement('div');
             front.classList.add('memory-card-front');
@@ -171,7 +170,6 @@ function initMemoryGame() {
         if (isMatch) {
             firstCard.classList.add('matched');
             secondCard.classList.add('matched');
-            // оставляем flipped, не убираем
             matchedCount += 2;
             resetTurn();
 
@@ -186,7 +184,7 @@ function initMemoryGame() {
                 firstCard.classList.remove('flipped', 'mismatch');
                 secondCard.classList.remove('flipped', 'mismatch');
                 resetTurn();
-            }, 1000);
+            }, 800); // достаточное время для анимации
         }
     }
 
@@ -204,7 +202,6 @@ function initMemoryGame() {
 
     startMemoryGame();
 }
-
 // Инициализация игры "Библейские загадки"
 function initBiblePuzzles() {
     const userData = JSON.parse(localStorage.getItem('rikkieUserData'));
