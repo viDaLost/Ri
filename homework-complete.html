@@ -4,23 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Рикки: Задание выполнено</title>
-    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Neucha&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="homework-complete-page">
     <div class="app">
-        <div class="modal homework-complete active">
+        <div class="screen homework-complete active">
             <div class="modal-content">
-                <p>Ты большой молодец! Проверим твои знания на детском собрании!</p>
-                <button id="closeHomeworkModalBtn" class="blue-btn">Закрыть</button>
+                <p>Ты большой молодец! Рикки проверит твои знания на детском собрании!</p>
+                <button id="closeHomeworkModalBtn" class="blue-btn">Главное меню</button>
             </div>
         </div>
     </div>
 
-    <script>
-        document.getElementById('closeHomeworkModalBtn').addEventListener('click', () => {
-            window.location.href = 'main-menu.html';
-        });
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>
