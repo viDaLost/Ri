@@ -1,11 +1,11 @@
 /* Подключение шрифта */
-@import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Neucha&display=swap');
 
 /* Общие стили */
 body {
     margin: 0;
     padding: 0;
-    font-family: 'Luckiest Guy', cursive;
+    font-family: 'Neucha', cursive;
     color: #333;
     overflow: hidden;
     background-color: #f0f0f0;
@@ -110,7 +110,7 @@ body {
 
 /* Кнопки */
 button {
-    font-family: 'Luckiest Guy', cursive;
+    font-family: 'Neucha', cursive;
     border: none;
     border-radius: 25px;
     padding: 15px 25px;
@@ -174,6 +174,10 @@ button:active {
 }
 
 /* Анимации */
+.hidden {
+    display: none;
+}
+
 .pulse {
     animation: pulse 2s infinite;
 }
