@@ -1,11 +1,11 @@
 /* Подключение шрифта */
-@import url('https://fonts.googleapis.com/css2?family=Neucha&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
 
 /* Общие стили */
 body {
     margin: 0;
     padding: 0;
-    font-family: 'Neucha', cursive;
+    font-family: 'Luckiest Guy', cursive;
     color: #333;
     overflow: hidden;
     background-color: #f0f0f0;
@@ -46,7 +46,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 0;
+    z-index: -1;
 }
 
 .backgrounds img {
@@ -58,26 +58,45 @@ body {
     object-fit: cover;
 }
 
-/* Приветствие в главном меню */
-.greeting-box {
-    background-color: rgba(255, 250, 250, 0.8); /* Полупрозрачный фон */
-    border-radius: 25px;
+/* Экраны */
+.screen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     padding: 20px;
-    max-width: 80%;
-    text-align: center;
-    font-size: 1.3em;
-    font-weight: bold;
-    color: #333;
+    box-sizing: border-box;
+    z-index: 2;
 }
 
-.greeting-box span {
-    font-weight: bold;
-    color: #388e3c;
+.screen.active {
+    display: flex;
+}
+
+.character-container {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+    margin-bottom: 20px;
+}
+
+.character {
+    width: 100%;
+    height: auto;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
 }
 
 /* Кнопки */
 button {
-    font-family: 'Neucha', cursive;
+    font-family: inherit;
     border: none;
     border-radius: 25px;
     padding: 15px 25px;
@@ -123,15 +142,6 @@ button:active {
     color: #333;
 }
 
-/* Анимации */
-.hidden {
-    display: none;
-}
-
-.pulse {
-    animation: pulse 2s infinite;
-}
-
 @keyframes pulse {
     0% { transform: scale(1); }
     50% { transform: scale(1.05); }
@@ -155,4 +165,35 @@ input:focus {
     outline: none;
     border-color: #80deea;
     box-shadow: 0 0 8px rgba(128, 222, 234, 0.5);
+}
+
+/* Приветствие в главном меню */
+.greeting-box {
+    background-color: rgba(255, 250, 250, 0.8);
+    border-radius: 25px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    font-size: 1.2em;
+    max-width: 80%;
+    text-align: center;
+    color: #333;
+}
+
+.greeting-box span {
+    font-weight: bold;
+    color: #388e3c;
+}
+
+/* Адаптивность */
+@media (max-width: 600px) {
+    .menu-buttons,
+    .homework-buttons,
+    .screen-buttons {
+        flex-direction: column;
+    }
+    
+    button {
+        font-size: 1em;
+    }
 }
