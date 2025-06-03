@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Рикки: Домашнее задание</title>
-    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Neucha&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="homework-page">
@@ -22,7 +22,7 @@
                 <div id="reminderInput" class="hidden">
                     <label for="reminderTime">Выберите время напоминания:</label>
                     <input type="datetime-local" id="reminderTime">
-                    <button id="setReminderBtn" class="green-btn">Установить напоминание</button>
+                    <button id="setReminderBtn" class="green-btn">Подтвердить</button>
                 </div>
                 <div class="screen-buttons">
                     <button class="blue-btn" onclick="window.location.href='main-menu.html'">Главное меню</button>
@@ -31,14 +31,14 @@
         </div>
     </div>
 
-    <!-- Модальное окно -->
-    <div class="modal homework-complete hidden" id="homeworkCompleteModal">
-        <div class="modal-content">
-            <p>Ты большой молодец! Проверим твои знания на детском собрании!</p>
-            <button id="closeHomeworkModalBtn" class="blue-btn">Закрыть</button>
-        </div>
-    </div>
-
-    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const homeworkCompleteModal = document.getElementById('homeworkCompleteModal');
+            document.getElementById('closeHomeworkModalBtn').addEventListener('click', () => {
+                homeworkCompleteModal.classList.remove('active');
+                window.location.href = 'main-menu.html';
+            });
+        });
+    </script>
 </body>
 </html>
