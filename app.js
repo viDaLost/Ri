@@ -115,11 +115,9 @@ function initMemoryGame() {
     let matchedCount = 0;
 
     function startMemoryGame() {
-        // Создание пар
-        const pairs = [];
-        for (let i = 1; i <= 8; i++) {
-            pairs.push(i, i);
-        }
+        // Смайлики фруктов
+        const fruits = ['🍎', '🍌', '🍒', '🍇', '🍊', '🍐', '🍓', '🍉'];
+        const pairs = [...fruits, ...fruits]; // 8 пар
         
         shuffle(pairs);
         
@@ -129,10 +127,10 @@ function initMemoryGame() {
         secondCard = null;
         matchedCount = 0;
         
-        pairs.forEach((pairId, index) => {
+        pairs.forEach((emoji, index) => {
             const card = document.createElement('div');
             card.classList.add('memory-card');
-            card.dataset.pairId = pairId;
+            card.dataset.pairId = index % 8 + 1;
             
             const front = document.createElement('div');
             front.classList.add('memory-card-front');
@@ -140,36 +138,28 @@ function initMemoryGame() {
             
             const back = document.createElement('div');
             back.classList.add('memory-card-back');
-            
-            const img = document.createElement('img');
-            img.src = `img/puzzle-pieces/piece${pairId}.png`;
-            img.alt = `Пазл ${pairId}`;
-            img.style.width = '100%';
-            img.style.height = '100%';
-            img.style.objectFit = 'contain';
-            
-            back.appendChild(img);
+            back.textContent = emoji;
             
             card.appendChild(front);
             card.appendChild(back);
             
-            card.addEventListener('click', flipCard);
+            card.addEventListener('click', () => flipCard(card));
             memoryGrid.appendChild(card);
             cards.push(card);
         });
     }
 
-    function flipCard() {
-        if (lockBoard || this.classList.contains('flipped') || this.classList.contains('matched')) return;
+    function flipCard(card) {
+        if (lockBoard || card.classList.contains('flipped') || card.classList.contains('matched')) return;
         
-        this.classList.add('flipped');
+        card.classList.add('flipped');
         
         if (!firstCard) {
-            firstCard = this;
+            firstCard = card;
             return;
         }
         
-        secondCard = this;
+        secondCard = card;
         lockBoard = true;
         
         checkForMatch();
@@ -188,12 +178,10 @@ function initMemoryGame() {
                 winMessage.classList.remove('hidden');
             }
         } else {
-            firstCard.classList.add('mismatch');
-            secondCard.classList.add('mismatch');
-            
+            // Анимация неудачного выбора
             setTimeout(() => {
-                firstCard.classList.remove('flipped', 'mismatch');
-                secondCard.classList.remove('flipped', 'mismatch');
+                firstCard.classList.remove('flipped');
+                secondCard.classList.remove('flipped');
                 resetTurn();
             }, 1000);
         }
