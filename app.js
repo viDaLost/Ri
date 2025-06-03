@@ -115,9 +115,11 @@ function initMemoryGame() {
     let matchedCount = 0;
 
     function startMemoryGame() {
-        // Временные смайлики вместо изображений
-        const emojis = ['😊', '😎', '😂', '🤣', '😍', '🥳', '😇', '🥰'];
-        const pairs = [...emojis, ...emojis]; // 8 пар по 2 изображения
+        // Создание пар
+        const pairs = [];
+        for (let i = 1; i <= 8; i++) {
+            pairs.push(i, i);
+        }
         
         shuffle(pairs);
         
@@ -127,10 +129,10 @@ function initMemoryGame() {
         secondCard = null;
         matchedCount = 0;
         
-        pairs.forEach((emoji, index) => {
+        pairs.forEach((pairId, index) => {
             const card = document.createElement('div');
             card.classList.add('memory-card');
-            card.dataset.pairId = index % 8 + 1;
+            card.dataset.pairId = pairId;
             
             const front = document.createElement('div');
             front.classList.add('memory-card-front');
@@ -138,33 +140,41 @@ function initMemoryGame() {
             
             const back = document.createElement('div');
             back.classList.add('memory-card-back');
-            back.textContent = emoji;
+            
+            const img = document.createElement('img');
+            img.src = `img/puzzle-pieces/piece${pairId}.png`;
+            img.alt = `Пазл ${pairId}`;
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'contain';
+            
+            back.appendChild(img);
             
             card.appendChild(front);
             card.appendChild(back);
             
-            card.addEventListener('click', () => flipCard(card));
+            card.addEventListener('click', flipCard);
             memoryGrid.appendChild(card);
             cards.push(card);
         });
     }
-    
-    function flipCard(card) {
-        if (lockBoard || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+
+    function flipCard() {
+        if (lockBoard || this.classList.contains('flipped') || this.classList.contains('matched')) return;
         
-        card.classList.add('flipped');
+        this.classList.add('flipped');
         
         if (!firstCard) {
-            firstCard = card;
+            firstCard = this;
             return;
         }
         
-        secondCard = card;
+        secondCard = this;
         lockBoard = true;
         
         checkForMatch();
     }
-    
+
     function checkForMatch() {
         const isMatch = firstCard.dataset.pairId === secondCard.dataset.pairId;
         
@@ -185,15 +195,15 @@ function initMemoryGame() {
                 firstCard.classList.remove('flipped', 'mismatch');
                 secondCard.classList.remove('flipped', 'mismatch');
                 resetTurn();
-            }, 1000); // Время красной обводки
+            }, 1000);
         }
     }
-    
+
     function resetTurn() {
         [firstCard, secondCard] = [null, null];
         lockBoard = false;
     }
-    
+
     function shuffle(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
