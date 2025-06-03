@@ -3,23 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Рикки: Задание выполнено</title>
+    <title>Рикки: Домашнее задание</title>
     <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="homework-page">
     <div class="app">
-        <div class="modal homework-complete active">
-            <div class="modal-content">
-                <p>Ты большой молодец! Проверим твои знания на детском собрании!</p>
-                <button id="closeHomeworkModalBtn" class="blue-btn">Закрыть</button>
+        <div class="screen homework active">
+            <div class="game-header">
+                <h2>Домашнее задание</h2>
+            </div>
+            <div class="homework-content">
+                <p id="homeworkText"></p>
+                <div class="homework-buttons">
+                    <button id="doneBtn" class="yellow-btn">Выполнено</button>
+                    <button id="remindBtn" class="green-btn">Напомнить позже</button>
+                </div>
+                <div id="reminderInput" class="hidden">
+                    <label for="reminderTime">Выберите время напоминания:</label>
+                    <input type="datetime-local" id="reminderTime">
+                    <button id="setReminderBtn" class="green-btn">Установить напоминание</button>
+                </div>
+                <div class="screen-buttons">
+                    <button class="blue-btn" onclick="window.location.href='main-menu.html'">Главное меню</button>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Модальное окно -->
+    <div class="modal homework-complete hidden" id="homeworkCompleteModal">
+        <div class="modal-content">
+            <p>Ты большой молодец! Проверим твои знания на детском собрании!</p>
+            <button id="closeHomeworkModalBtn" class="blue-btn">Закрыть</button>
+        </div>
+    </div>
+
     <script>
-        document.getElementById('closeHomeworkModalBtn').addEventListener('click', () => {
-            window.location.href = 'main-menu.html';
+        let homeworkCompleteModal = null;
+        
+        async function initHomework() {
+            const homeworkText = document.getElementById('homeworkText');
+            homeworkText.textContent = window.contentData.homework.default;
+            
+            // Создание модального окна
+            homeworkCompleteModal = document.getElementById('homeworkCompleteModal');
+            document.getElementById('closeHomeworkModalBtn').addEventListener('click', () => {
+                homeworkCompleteModal.classList.remove('active');
+                window.location.href = 'main-menu.html';
+            });
+            
+            // Обработчики событий
+            document.getElementById('doneBtn').addEventListener('click', () => {
+                homeworkCompleteModal.classList.add('active');
+            });
+            
+            document.getElementById('remindBtn').addEventListener('click', () => {
+                document.getElementById('reminderInput').classList.toggle('hidden');
+            });
+            
+            document.getElementById('setReminderBtn').addEventListener('click', () => {
+                const reminderTimeValue = document.getElementById('reminderTime').value;
+                
+                if (reminderTimeValue) {
+                    localStorage.setItem('rikkieHomeworkReminder', reminderTimeValue);
+                    alert('Напоминание установлено!');
+                    document.getElementById('reminderInput').classList.add('hidden');
+                } else {
+                    alert('Выберите дату и время напоминания');
+                }
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            await window.loadContent();
+            window.loadUserData();
+            
+            if (document.querySelector('.homework-page')) {
+                initHomework();
+            }
         });
     </script>
 </body>
