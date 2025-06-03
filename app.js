@@ -212,58 +212,104 @@ function initBiblePuzzles() {
         window.location.href = 'index.html';
         return;
     }
-    
+
     loadUserData();
     checkGameTimer();
-    
+
     const currentPuzzle = document.getElementById('currentPuzzle');
     const answerInput = document.getElementById('answerInput');
     const checkAnswerBtn = document.getElementById('checkAnswerBtn');
-    
-    let currentPuzzleIndex = 0;
+
+    let puzzleIndex = 0;
+    let shuffledPuzzles = [...contentData.puzzles];
     let currentPuzzleAnswer = "";
-    
-    function startPuzzleGame() {
-        if (currentPuzzleIndex >= contentData.puzzles.length) {
-            currentPuzzleIndex = 0;
+    let isAnswered = false;
+
+    // Перемешиваем загадки при загрузке
+    shuffle(shuffledPuzzles);
+
+    function showNextPuzzle() {
+        if (puzzleIndex >= shuffledPuzzles.length) {
+            puzzleIndex = 0;
+            shuffledPuzzles = [...contentData.puzzles]; // Перемешиваем заново
+            shuffle(shuffledPuzzles);
         }
-        
-        const puzzle = contentData.puzzles[currentPuzzleIndex];
+
+        const puzzle = shuffledPuzzles[puzzleIndex];
         currentPuzzle.textContent = puzzle.question;
         currentPuzzleAnswer = puzzle.answer.toLowerCase();
         answerInput.value = '';
+        isAnswered = false;
     }
-    
-    startPuzzleGame();
-    
+
+    // Показываем первую загадку
+    showNextPuzzle();
+
     checkAnswerBtn.addEventListener('click', () => {
+        if (isAnswered) return;
+
         const userAnswer = answerInput.value.trim().toLowerCase();
-        
+
+        if (!userAnswer) {
+            alert("Пожалуйста, введите свой ответ");
+            return;
+        }
+
+        isAnswered = true;
+
         if (userAnswer === currentPuzzleAnswer) {
-            const feedback = document.getElementById('currentPuzzle');
-            feedback.textContent = "Молодец!";
-            feedback.style.color = "#388e3c";
-            
+            // Если ответ правильный
+            currentPuzzle.textContent = "Молодец!";
+            currentPuzzle.style.color = "#388e3c";
+
             setTimeout(() => {
-                currentPuzzleIndex++;
-                if (currentPuzzleIndex < contentData.puzzles.length) {
-                    startPuzzleGame();
-                    feedback.style.color = "#333";
+                puzzleIndex++;
+                if (puzzleIndex < shuffledPuzzles.length) {
+                    showNextPuzzle();
                 } else {
-                    feedback.textContent = "Вы прошли все загадки! Молодец!";
-                    window.location.href = 'choose-game.html';
+                    // Все загадки отгаданы
+                    currentPuzzle.textContent = "Ты отгадал все загадки! Попробуем ещё раз?";
+                    currentPuzzle.style.color = "#ff66b2";
+                    answerInput.disabled = true;
+                    checkAnswerBtn.disabled = true;
+                    checkAnswerBtn.classList.add('hidden');
+
+                    // Добавляем кнопку "Ещё раз"
+                    const retryBtn = document.createElement('button');
+                    retryBtn.textContent = "Ещё раз";
+                    retryBtn.className = "green-btn";
+                    retryBtn.onclick = () => {
+                        answerInput.disabled = false;
+                        checkAnswerBtn.disabled = false;
+                        checkAnswerBtn.classList.remove('hidden');
+                        puzzleIndex = 0;
+                        showNextPuzzle();
+                    };
+
+                    const parent = checkAnswerBtn.parentElement;
+                    parent.appendChild(retryBtn);
                 }
             }, 1500);
         } else {
-            feedback.textContent = "Попробуй еще раз!";
-            feedback.style.color = "#d32f2f";
-            
+            // Неверный ответ
+            currentPuzzle.textContent = "Неправильно... Вспомни поточнее!";
+            currentPuzzle.style.color = "#d32f2f";
+
             setTimeout(() => {
-                feedback.textContent = contentData.puzzles[currentPuzzleIndex].question;
-                feedback.style.color = "#333";
+                currentPuzzle.textContent = shuffledPuzzles[puzzleIndex].question;
+                currentPuzzle.style.color = "#333";
+                isAnswered = false;
             }, 1500);
         }
     });
+}
+
+// Функция для перемешивания массива
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
 }
 
 // Проверка времени сессии
