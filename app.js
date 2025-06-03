@@ -57,8 +57,8 @@ function initMainMenu() {
     checkGameTimer();
 }
 
-// Инициализация игры "Библейские загадки"
-function initBiblePuzzles() {
+// Инициализация домашнего задания
+function initHomework() {
     const userData = JSON.parse(localStorage.getItem('rikkieUserData'));
     if (!userData) {
         window.location.href = 'index.html';
@@ -68,54 +68,32 @@ function initBiblePuzzles() {
     loadUserData();
     checkGameTimer();
     
-    const currentPuzzle = document.getElementById('currentPuzzle');
-    const answerInput = document.getElementById('answerInput');
-    const checkAnswerBtn = document.getElementById('checkAnswerBtn');
+    const homeworkText = document.getElementById('homeworkText');
+    homeworkText.textContent = contentData.homework.default;
     
-    let currentPuzzleIndex = 0;
-    let currentPuzzleAnswer = "";
+    // Обработчики событий
+    document.getElementById('remindBtn').addEventListener('click', () => {
+        document.getElementById('reminderInput').classList.toggle('hidden');
+    });
     
-    function startPuzzleGame() {
-        if (currentPuzzleIndex >= contentData.puzzles.length) {
-            currentPuzzleIndex = 0;
-        }
+    document.getElementById('setReminderBtn').addEventListener('click', () => {
+        const reminderTimeValue = document.getElementById('reminderTime').value;
         
-        const puzzle = contentData.puzzles[currentPuzzleIndex];
-        currentPuzzle.textContent = puzzle.question;
-        currentPuzzleAnswer = puzzle.answer.toLowerCase();
-        answerInput.value = '';
-    }
-    
-    startPuzzleGame();
-    
-    checkAnswerBtn.addEventListener('click', () => {
-        const userAnswer = answerInput.value.trim().toLowerCase();
-        
-        if (userAnswer === currentPuzzleAnswer) {
-            const feedback = document.getElementById('currentPuzzle');
-            feedback.textContent = "Молодец!";
-            feedback.style.color = "#388e3c";
+        if (reminderTimeValue) {
+            localStorage.setItem('rikkieHomeworkReminder', reminderTimeValue);
+            document.getElementById('reminderInput').classList.add('hidden');
+            document.getElementById('reminderConfirmation').classList.remove('hidden');
             
             setTimeout(() => {
-                currentPuzzleIndex++;
-                if (currentPuzzleIndex < contentData.puzzles.length) {
-                    startPuzzleGame();
-                    feedback.style.color = "#333";
-                } else {
-                    feedback.textContent = "Вы прошли все загадки! Молодец!";
-                    window.location.href = 'choose-game.html';
-                }
+                document.getElementById('reminderConfirmation').classList.add('hidden');
             }, 1500);
         } else {
-            const feedback = document.getElementById('currentPuzzle');
-            feedback.textContent = "Попробуй еще раз!";
-            feedback.style.color = "#d32f2f";
-            
-            setTimeout(() => {
-                feedback.textContent = contentData.puzzles[currentPuzzleIndex].question;
-                feedback.style.color = "#333";
-            }, 1500);
+            alert('Выберите дату и время напоминания');
         }
+    });
+    
+    document.getElementById('okReminderBtn').addEventListener('click', () => {
+        document.getElementById('reminderConfirmation').classList.add('hidden');
     });
 }
 
@@ -140,9 +118,9 @@ function initMemoryGame() {
     let matchedCount = 0;
     
     function startMemoryGame() {
-        // Временные изображения
+        // Временные смайлики вместо изображений
         const fruits = ['🍎', '🍌', '🍒', '🍇', '🍊', '🍐', '🍓', '🍉'];
-        const pairs = [...fruits, ...fruits, ...fruits, ...fruits]; // 8 пар по 2 = 16 карточек (4x5)
+        const pairs = [...fruits, ...fruits];
         
         shuffle(pairs);
         
@@ -210,7 +188,7 @@ function initMemoryGame() {
                 firstCard.classList.remove('flipped', 'mismatch');
                 secondCard.classList.remove('flipped', 'mismatch');
                 resetTurn();
-            }, 500);
+            }, 1000);
         }
     }
     
@@ -225,12 +203,12 @@ function initMemoryGame() {
             [array[i], array[j]] = [array[j], array[i]];
         }
     }
-    
+
     startMemoryGame();
 }
 
-// Инициализация домашнего задания
-function initHomework() {
+// Инициализация игры "Библейские загадки"
+function initBiblePuzzles() {
     const userData = JSON.parse(localStorage.getItem('rikkieUserData'));
     if (!userData) {
         window.location.href = 'index.html';
@@ -240,27 +218,53 @@ function initHomework() {
     loadUserData();
     checkGameTimer();
     
-    const homeworkText = document.getElementById('homeworkText');
-    homeworkText.textContent = contentData.homework.default;
+    const currentPuzzle = document.getElementById('currentPuzzle');
+    const answerInput = document.getElementById('answerInput');
+    const checkAnswerBtn = document.getElementById('checkAnswerBtn');
     
-    document.getElementById('remindBtn').addEventListener('click', () => {
-        document.getElementById('reminderInput').classList.toggle('hidden');
-    });
+    let currentPuzzleIndex = 0;
+    let currentPuzzleAnswer = "";
     
-    document.getElementById('setReminderBtn').addEventListener('click', () => {
-        const reminderTimeValue = document.getElementById('reminderTime').value;
-        
-        if (reminderTimeValue) {
-            localStorage.setItem('rikkieHomeworkReminder', reminderTimeValue);
-            alert('Напоминание установлено!');
-            document.getElementById('reminderInput').classList.add('hidden');
-        } else {
-            alert('Выберите дату и время напоминания');
+    function startPuzzleGame() {
+        if (currentPuzzleIndex >= contentData.puzzles.length) {
+            currentPuzzleIndex = 0;
         }
-    });
+        
+        const puzzle = contentData.puzzles[currentPuzzleIndex];
+        currentPuzzle.textContent = puzzle.question;
+        currentPuzzleAnswer = puzzle.answer.toLowerCase();
+        answerInput.value = '';
+    }
     
-    document.getElementById('doneBtn').addEventListener('click', () => {
-        window.location.href = 'homework-complete.html';
+    startPuzzleGame();
+    
+    checkAnswerBtn.addEventListener('click', () => {
+        const userAnswer = answerInput.value.trim().toLowerCase();
+        
+        if (userAnswer === currentPuzzleAnswer) {
+            const feedback = document.getElementById('currentPuzzle');
+            feedback.textContent = "Молодец!";
+            feedback.style.color = "#388e3c";
+            
+            setTimeout(() => {
+                currentPuzzleIndex++;
+                if (currentPuzzleIndex < contentData.puzzles.length) {
+                    startPuzzleGame();
+                    feedback.style.color = "#333";
+                } else {
+                    feedback.textContent = "Вы прошли все загадки! Молодец!";
+                    window.location.href = 'choose-game.html';
+                }
+            }, 1500);
+        } else {
+            feedback.textContent = "Попробуй еще раз!";
+            feedback.style.color = "#d32f2f";
+            
+            setTimeout(() => {
+                feedback.textContent = contentData.puzzles[currentPuzzleIndex].question;
+                feedback.style.color = "#333";
+            }, 1500);
+        }
     });
 }
 
