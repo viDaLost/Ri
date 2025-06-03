@@ -39,50 +39,6 @@
         </div>
     </div>
 
-    <script>
-        let homeworkCompleteModal = null;
-        
-        async function initHomework() {
-            const homeworkText = document.getElementById('homeworkText');
-            homeworkText.textContent = window.contentData.homework.default;
-            
-            // Инициализация модального окна
-            homeworkCompleteModal = document.getElementById('homeworkCompleteModal');
-            document.getElementById('closeHomeworkModalBtn').addEventListener('click', () => {
-                homeworkCompleteModal.classList.remove('active');
-                window.location.href = 'main-menu.html';
-            });
-            
-            // Обработчики событий
-            document.getElementById('doneBtn').addEventListener('click', () => {
-                homeworkCompleteModal.classList.add('active');
-            });
-            
-            document.getElementById('remindBtn').addEventListener('click', () => {
-                document.getElementById('reminderInput').classList.toggle('hidden');
-            });
-            
-            document.getElementById('setReminderBtn').addEventListener('click', () => {
-                const reminderTimeValue = document.getElementById('reminderTime').value;
-                
-                if (reminderTimeValue) {
-                    localStorage.setItem('rikkieHomeworkReminder', reminderTimeValue);
-                    alert('Напоминание установлено!');
-                    document.getElementById('reminderInput').classList.add('hidden');
-                } else {
-                    alert('Выберите дату и время напоминания');
-                }
-            });
-        }
-        
-        document.addEventListener('DOMContentLoaded', async () => {
-            await window.loadContent();
-            window.loadUserData();
-            
-            if (document.querySelector('.homework-page')) {
-                initHomework();
-            }
-        });
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>
